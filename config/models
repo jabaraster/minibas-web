@@ -1,0 +1,21 @@
+User
+    name Text
+    password ByteString
+    emailAddress Text
+    verified Bool
+    verifyKey Text
+    resetPasswordKey Text
+    UniqueUser name
+    deriving Show Read Eq
+Game
+    name Text
+    place Text
+    date UTCTime
+    deriving Show Read Eq
+Score
+    gameId GameId
+    quarter Quarter
+    score Int
+    UniqueScore gameId quarter
+    deriving Show Read Eq Generic
+

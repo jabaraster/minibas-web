@@ -1,0 +1,11 @@
+@fontColor: #555511;
+@baseColor: #f5deb3;
+
+body {
+    color: #{fontColor};
+    background-color: #{baseColor};
+}
+
+#page {
+    margin-top: 10px;
+}
