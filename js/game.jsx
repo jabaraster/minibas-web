@@ -2,20 +2,22 @@ import React           from 'react'
 import { createStore } from 'redux'
 import { Provider }    from 'react-redux'
 import { render }      from 'react-dom'
-import app             from './reducers/games'
+import * as actions    from './actions/game'
+import app             from './reducers/game'
 import Ajaxer          from './lib/ajaxer'
 import lib             from './lib/lib'
-import swal            from 'sweetalert'
+import RootComponent   from './containers/Game'
 
 const store = createStore(app, {})
 
 $(() => {
-    Ajaxer.get(lib.href('empty-game-href')).end((err, ref) => {
-        if (err) {
-            swal({title:'通信エラー',text:err,type:'error'})
-            return
+    Ajaxer.get($('#game-href').text()).end((err, res) => {
+        if (Ajaxer.evalError(err)) return
+        const state = res.body
+        state.uiState = {
+            menuOpen: false,
         }
-        store.dispatch(actions.initializeGames(res.body))
+        store.dispatch(actions.initialzeGame(state))
         render(
             <Provider store={store}>
               <RootComponent />
