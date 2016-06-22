@@ -6,6 +6,6 @@ body {
     background-color: #{baseColor};
 }
 
-#page {
+#content {
     margin-top: 10px;
 }

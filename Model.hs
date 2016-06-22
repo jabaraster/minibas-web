@@ -11,23 +11,10 @@ module Model (
   , module ModelDef
 ) where
 
-import Data.ByteString
-import Data.Text
-import Data.Time.Clock
-import Data.Typeable (Typeable)
-import Database.Persist.TH (share, mkPersist, sqlSettings
-                           , mkMigrate, persistFileWith
-                           )
-
-import Database.Persist.Quasi (lowerCaseSettings)
-
-import GHC.Base
-import Prelude
-
-import Data.Aeson
-import Database.Persist
-import GHC.Generics
 import ModelDef
+
+import ClassyPrelude.Yesod
+import Database.Persist.Quasi (lowerCaseSettings)
 
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
@@ -35,6 +22,3 @@ import ModelDef
 -- http://www.yesodweb.com/book/persistent/
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
-
-instance ToJSON Score
-instance ToJSON (Entity Score)

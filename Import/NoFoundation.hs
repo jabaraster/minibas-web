@@ -4,6 +4,7 @@ module Import.NoFoundation
 
 import ClassyPrelude.Yesod   as Import
 import Minibas.Types         as Import
+import Minibas.Web           as Import
 import Model                 as Import
 import Settings              as Import
 import Settings.StaticFiles  as Import

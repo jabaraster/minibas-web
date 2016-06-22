@@ -6,6 +6,9 @@ packages:
 - location:
     git: https://github.com/jabaraster/jabara-yesod-util
     commit: ddf4d7f8a7e7b5b79bcef8c50754bc92513c997d
+- location:
+    git: https://github.com/jabaraster/jabara-persist-util
+    commit: 0911503151ccdc68007aa87da378935c3707d22c
 - '.'
 extra-deps: []
 flags: {}

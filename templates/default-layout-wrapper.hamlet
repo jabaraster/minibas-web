@@ -53,3 +53,8 @@ $newline never
 
     <script>
       document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+
+    <div .hidden>
+      <a href=@{GameIndexR} #game-index-href>
+      <a href=@{NewGameUiR} #new-game-href>
+      <a href=@{EmptyGameR} #empty-game-href>

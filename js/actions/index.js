@@ -5,3 +5,7 @@ export function editGame(gameIndex) {
 export function setTeamName(type, name, gameIndex) {
     return { type, name, gameIndex }
 }
+
+export function initializeGames(games) {
+    return { type: 'INITIALIZE_GAMES', games }
+}

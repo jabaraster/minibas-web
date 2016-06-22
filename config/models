@@ -7,15 +7,18 @@ User
     resetPasswordKey Text
     UniqueUser name
     deriving Show Read Eq
-Game
+Game json
     name Text
     place Text
+    teamAName Text
+    teamBName Text
     date UTCTime
     deriving Show Read Eq
-Score
+Score json
     gameId GameId
     quarter Quarter
-    score Int
+    teamAScore Int
+    teamBScore Int
     UniqueScore gameId quarter
-    deriving Show Read Eq Generic
+    deriving Show Read Eq
 
