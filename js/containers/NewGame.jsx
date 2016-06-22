@@ -87,7 +87,7 @@ const SecondPane = connect((_, props) => { return props })(({game,dispatch}) => 
     )
 })
 
-const NewGame = ({game, wizardState, dispatch}) => {
+const NewGame = ({game, score, wizardState, dispatch}) => {
     const movePreviousPane = () => {
         if (wizardState.activeKey === 0) return;
         dispatch(actions.changeWizardPane(wizardState.activeKey - 1))
@@ -97,6 +97,23 @@ const NewGame = ({game, wizardState, dispatch}) => {
         dispatch(actions.changeWizardPane(wizardState.activeKey + 1))
     }
     const save = () => {
+        swal({
+            title: '',
+            text: '保存しますか？',
+            type: 'info',
+            showCancelButton: true,
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true,
+        },
+        function(isConfirm) {
+            if (!isConfirm) return
+            Ajaxer.put(lib.href('game-index-href')).
+                send({game,score}).
+                end(function(err, res) {
+                    if (Ajaxer.evalError(err)) return
+                    swal('保存完了！', '試合を表示します。', 'success')
+                })
+        })
     }
     const tagPane = (wizardState) => {
       switch (wizardState.activeKey) {
@@ -123,7 +140,7 @@ const NewGame = ({game, wizardState, dispatch}) => {
 
           {wizardState.activeKey === 0 ?
             null :
-            <ButtonToolbar>
+            <ButtonToolbar className="previous">
               <a className="btn btn-info btn-lg" href="#" onClick={movePreviousPane}>
                 <Glyphicon glyph="arrow-left" />
                 前へ
@@ -131,17 +148,19 @@ const NewGame = ({game, wizardState, dispatch}) => {
             </ButtonToolbar>}
           {wizardState.activeKey < wizardState.panes.length - 1 ?
              <ButtonToolbar className="next">
-               <a className="btn btn-info btn-lg" href="#" onClick={moveNextPane}>
+               <a className="btn btn-info btn-lg btn-next" href="#" onClick={moveNextPane}>
                  <Glyphicon glyph="arrow-right" />
                  次へ
                </a>
-             </ButtonToolbar> : 
-             <ButtonToolbar className="save">
-               <Button bsStyle="success" bsSize="large" onClick={save} block>
-                 <Glyphicon glyph="ok" />
-                 保存
-               </Button>
-             </ButtonToolbar>}
+             </ButtonToolbar> :
+             null }
+
+          <ButtonToolbar className="save">
+            <Button bsStyle="success" bsSize="large" onClick={save} block>
+              <Glyphicon glyph="ok" />
+              保存
+            </Button>
+          </ButtonToolbar>
 
         </div>
     )

@@ -16,10 +16,8 @@ const store = createStore(app, initialState)
 
 $(() => {
     Ajaxer.get(lib.href('game-index-href')).end((err, res) => {
-        if (err) {
-            swal({title:'通信エラー',text:err,type:'error'})
-            return
-        }
+        if (Ajaxer.evalError(err)) return
+        store.dispatch(actions.initializeGames(res.body))
         render(
             <Provider store={store}>
               <RootComponent />

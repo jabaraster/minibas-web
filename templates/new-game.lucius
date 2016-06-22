@@ -3,7 +3,12 @@ div.form-group {
   font-size: 150%;
 }
 div.next {
-  float: right;
+  float: none;
+  text-align: right;
+
+  > .btn-next {
+    float: none;
+  }
 }
 div.save {
   margin-top: 10px;

@@ -7,7 +7,7 @@ import Import
 
 import           Control.Lens
 import qualified Data.List as L (sortBy)
-import           Jabara.Persist.Util (dummyKey, toRecord)
+import           Jabara.Persist.Util (dummyKey, toRecord, toKey)
 
 getGameIndexR :: Handler [Entity Game]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
@@ -16,9 +16,9 @@ putGameIndexR :: Handler ()
 putGameIndexR = do
     req::VOGame <- requireJsonBody
     gameId <- runDB $ do
-                  game <- insert $ toRecord $ req^.voGameGame
-                  _    <- mapM (insert . toRecord) $ req^.voGameScore
-                  pure game
+                  gameId <- insert $ toRecord $ req^.voGameGame
+                  _      <- mapM (\s -> insert (toRecord s) { scoreGameId = gameId }) $ req^.voGameScore
+                  pure gameId
     sendResponseCreated $ GameR gameId
 
 getGameR :: GameId -> Handler VOGame

@@ -14,10 +14,7 @@ const store = createStore(newGame)
 
 $(() => {
     Ajaxer.get(lib.href('empty-game-href')).end((err, res) => {
-        if (err) {
-            swal({title:'通信エラー',text:err,type:'error'})
-            return
-        }
+        if (Ajaxer.evalError(err)) return
         const state = res.body
         state.wizardState = {
           activeKey: 0,
@@ -25,7 +22,7 @@ $(() => {
             { label: '試合名と場所' },
             { label: 'チーム名'     },
           ]}
-        store.dispatch(actions.initializeNewGame(res.body))
+        store.dispatch(actions.initializeNewGame(state))
         render(
             <Provider store={store}>
               <RootComponent />

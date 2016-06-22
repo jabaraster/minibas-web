@@ -1,16 +1,24 @@
 import React         from 'react'
 import { connect }   from 'react-redux'
 import ButtonToolbar from 'react-bootstrap/lib/ButtonToolbar'
+import Button        from 'react-bootstrap/lib/Button'
 import Glyphicon     from 'react-bootstrap/lib/Glyphicon'
 import lib           from '../lib/lib'
 
 const Games = ({games, dispatch}) => {
-  console.log(games)
     const tagGame = (game, idx) => {
         return (
-            <li key={'game_'+idx}>
-              {game.name}
-            </li>
+            <tr key={'game_'+idx}>
+              <td>{game.name}</td>
+              <td>
+                <Button>
+                  <Glyphicon glyph="pencil" />
+                </Button>
+                <Button>
+                  <Glyphicon glyph="trash" />
+                </Button>
+              </td>
+            </tr>
         )
     }
     return (
@@ -20,9 +28,12 @@ const Games = ({games, dispatch}) => {
               <Glyphicon glyph="plus" />
             </a>
           </ButtonToolbar>
-          <ul>
-            {games.map(tagGame)}
-          </ul>
+          <table className="table table-striped">
+            <thead></thead>
+            <tbody>
+              {games.map(tagGame)}
+            </tbody>
+          </table>
         </div>
     )
 }
