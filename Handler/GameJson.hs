@@ -19,7 +19,7 @@ putGameIndexR = do
                   gameId <- insert $ toRecord $ req^.voGameGame
                   _      <- mapM (\s -> insert (toRecord s) { scoreGameId = gameId }) $ req^.voGameScore
                   pure gameId
-    sendResponseCreated $ GameR gameId
+    sendResponseCreated $ GameUiR gameId
 
 getGameR :: GameId -> Handler VOGame
 getGameR gameId = runDB $ core gameId

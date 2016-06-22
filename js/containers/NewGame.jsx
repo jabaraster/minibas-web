@@ -105,15 +105,22 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
             closeOnConfirm: false,
             showLoaderOnConfirm: true,
         },
-        function(isConfirm) {
+        (isConfirm) => {
             if (!isConfirm) return
             Ajaxer.put(lib.href('game-index-href')).
                 send({game,score}).
-                end(function(err, res) {
+                end((err, res) => {
                     if (Ajaxer.evalError(err)) return
-                    swal('保存完了！', '試合を表示します。', 'success')
+                  console.log(res)
+                    swal({
+                        title: '保存完了！',
+                        text: '試合を表示します。',
+                        type: 'success'
+                    },() => {
+                        location.href = res.header.location
+                    })
                 })
-        })
+        });
     }
     const tagPane = (wizardState) => {
       switch (wizardState.activeKey) {
