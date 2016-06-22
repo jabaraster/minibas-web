@@ -22,3 +22,4 @@ export function changeTeamBName(value) {
 export function changeWizardPane(paneIndex) {
     return { type: 'CHANGE_WIZARD_PANE', paneIndex }
 }
+

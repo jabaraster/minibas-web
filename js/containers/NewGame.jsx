@@ -12,7 +12,7 @@ import Ajaxer        from '../lib/ajaxer'
 import lib           from '../lib/lib'
 import * as actions  from '../actions/new-game'
 
-const WizardMenu = connect(state => { return state.newGame.wizardState })
+const WizardMenu = connect(state => { return state.wizardState })
     (({activeKey,panes,dispatch}) => {
     const onSelect = (paneIndex) => {
         dispatch(actions.changeWizardPane(paneIndex))
@@ -148,7 +148,7 @@ const NewGame = ({game, wizardState, dispatch}) => {
 }
 
 function mapStateToProps(state) {
-    return state.newGame
+    return state
 }
 
 export default connect(mapStateToProps)(NewGame)
