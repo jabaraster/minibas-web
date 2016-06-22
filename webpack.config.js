@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
   context: __dirname + '/js',
   entry: {
-    'home'      : './home.jsx',
+    'sandbox'   : './sandbox.jsx',
     'game-index': './game-index.jsx',
     'new-game'  : './new-game.jsx',
     'game'      : './game.jsx',

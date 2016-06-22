@@ -56,5 +56,6 @@ $newline never
 
     <div .hidden>
       <a href=@{GameIndexR} #game-index-href>
+      <a href=@{GameIndexUiR} #game-index-ui-href>
       <a href=@{NewGameUiR} #new-game-href>
       <a href=@{EmptyGameR} #empty-game-href>

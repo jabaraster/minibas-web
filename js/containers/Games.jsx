@@ -5,6 +5,7 @@ import Glyphicon     from 'react-bootstrap/lib/Glyphicon'
 import lib           from '../lib/lib'
 
 const Games = ({games, dispatch}) => {
+  console.log(games)
     const tagGame = (game, idx) => {
         return (
             <li key={'game_'+idx}>

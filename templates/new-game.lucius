@@ -1,0 +1,17 @@
+div.form-group {
+  margin-top: 20px;
+  font-size: 150%;
+}
+div.next {
+  float: right;
+}
+div.save {
+  margin-top: 10px;
+}
+.nav {
+  margin-top: 10px;
+}
+.control-label > span.emphasis {
+  color: rgba(255,50,50,1);
+  font-size: 150%;
+}

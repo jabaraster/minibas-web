@@ -21,7 +21,7 @@ library
                      Settings
                      Settings.StaticFiles
                      Handler.Common
-                     Handler.Home
+                     Handler.Sandbox
                      Handler.GameJson
                      Handler.GameUi
                      ModelDef
@@ -109,7 +109,6 @@ test-suite test
     type:              exitcode-stdio-1.0
     main-is:           Spec.hs
     other-modules:     Handler.CommonSpec
-                       Handler.HomeSpec
                        Handler.GameJson
                        TestImport
     hs-source-dirs:    test

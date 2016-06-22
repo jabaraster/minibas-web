@@ -1,7 +1,7 @@
 function games(state={}, action) {
     switch (action.type) {
         case 'INITIALIZE_GAMES': {
-            return action.games
+            return { games: action.games }
         }
         case 'EDIT_GAME': {
             const newGames = [].concat(state)

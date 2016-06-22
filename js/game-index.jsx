@@ -2,14 +2,17 @@ import React           from 'react'
 import { createStore } from 'redux'
 import { Provider }    from 'react-redux'
 import { render }      from 'react-dom'
-import * as actions    from './actions'
-import app             from './reducers'
+import * as actions    from './actions/games'
+import app             from './reducers/games'
 import lib             from './lib/lib'
 import swal            from 'sweetalert'
 import Ajaxer          from './lib/ajaxer'
-import RootComponent   from './containers/NewGame'
+import RootComponent   from './containers/Games'
 
-const store = createStore(app, {})
+const initialState = {
+    games: []
+}
+const store = createStore(app, initialState)
 
 $(() => {
     Ajaxer.get(lib.href('game-index-href')).end((err, res) => {
@@ -17,7 +20,6 @@ $(() => {
             swal({title:'通信エラー',text:err,type:'error'})
             return
         }
-        console.log(res.body)
         render(
             <Provider store={store}>
               <RootComponent />
