@@ -3,6 +3,7 @@ module Import.NoFoundation
     ) where
 
 import ClassyPrelude.Yesod   as Import
+import Minibas.Css           as Import
 import Minibas.Types         as Import
 import Minibas.Web           as Import
 import Model                 as Import

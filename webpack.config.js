@@ -3,10 +3,10 @@ var webpack = require('webpack');
 module.exports = {
   context: __dirname + '/js',
   entry: {
-    'sandbox'   : './sandbox.jsx',
-    'game-index': './game-index.jsx',
-    'new-game'  : './new-game.jsx',
-    'game'      : './game.jsx',
+    'sandbox' : './sandbox.jsx',
+    'games'   : './games.jsx',
+    'new-game': './new-game.jsx',
+    'game'    : './game.jsx',
   },
   output: {
     path: __dirname + '/static/js',

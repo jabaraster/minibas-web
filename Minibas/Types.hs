@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Minibas.Types (
-    VOGame(..), voGameGame, voGameScore
+    VOGame(..), voGameGame, voGameEditUrl, voGameScore
 ) where
 
 import ClassyPrelude.Yesod
@@ -13,6 +13,7 @@ import Model (Score, Game)
 
 data VOGame = VOGame {
     _voGameGame :: Entity Game
+  , _voGameEditUrl :: Text
   , _voGameScore :: [Entity Score]
 } deriving (Show, Eq, Read, Generic)
 makeLenses ''VOGame

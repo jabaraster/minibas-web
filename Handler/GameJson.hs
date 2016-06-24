@@ -8,9 +8,20 @@ import Import
 import           Control.Lens
 import qualified Data.List as L (sortBy)
 import           Jabara.Persist.Util (dummyKey, toRecord, toKey)
+import           Jabara.Yesod.Util (getResourcePath)
 
-getGameIndexR :: Handler [Entity Game]
+getGameIndexR :: Handler [VOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
+  >>= mapM (\game -> entityToVo game [])
+
+-- entityToVo :: Entity Game -> [Entity Score] -> Handler VOGame
+entityToVo game@(Entity key _) score = do
+    path <- getResourcePath $ GameUiR key
+    pure $ VOGame {
+        _voGameGame = game
+      , _voGameEditUrl = path
+      , _voGameScore = score
+    }
 
 putGameIndexR :: Handler ()
 putGameIndexR = do
@@ -22,7 +33,11 @@ putGameIndexR = do
     sendResponseCreated $ GameUiR gameId
 
 getGameR :: GameId -> Handler VOGame
-getGameR gameId = runDB $ core gameId
+getGameR gameId = do
+    game <- runDB $ core gameId
+    path <- getResourcePath $ GameUiR gameId
+    pure $ game&voGameEditUrl .~ path
+
   where
     core :: MonadIO m => GameId -> ReaderT SqlBackend m VOGame
     core gameId = do
@@ -33,10 +48,19 @@ getGameR gameId = runDB $ core gameId
                                         l' = scoreQuarter $ toRecord l
                                     in  compare r' l'
                         )
-        pure $ VOGame { _voGameGame = Entity gameId game, _voGameScore = scores }
+        pure $ VOGame {
+                   _voGameGame = Entity gameId game
+                 , _voGameEditUrl = ""
+                 , _voGameScore = scores
+               }
 
 postGameR :: GameId -> Handler ()
 postGameR gameId = undefined
+
+deleteGameR :: GameId -> Handler ()
+deleteGameR gameId = runDB $ do
+    deleteWhere [ScoreGameId ==. gameId]
+    delete gameId
 
 getEmptyGameR :: Handler VOGame
 getEmptyGameR = do
@@ -49,36 +73,37 @@ getEmptyGameR = do
         , gameTeamBName = ""
         , gameDate = now
       }
+    , _voGameEditUrl = ""
     , _voGameScore = [
           Entity dummyKey $ Score {
               scoreGameId = dummyKey
             , scoreQuarter = First
-            , scoreTeamAScore  = 0
-            , scoreTeamBScore  = 0
+            , scoreTeamAPoint  = 0
+            , scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
               scoreGameId = dummyKey
             , scoreQuarter = Second
-            , scoreTeamAScore  = 0
-            , scoreTeamBScore  = 0
+            , scoreTeamAPoint  = 0
+            , scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
               scoreGameId = dummyKey
             , scoreQuarter = Third
-            , scoreTeamAScore  = 0
-            , scoreTeamBScore  = 0
+            , scoreTeamAPoint  = 0
+            , scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
               scoreGameId = dummyKey
             , scoreQuarter = Fourth
-            , scoreTeamAScore  = 0
-            , scoreTeamBScore  = 0
+            , scoreTeamAPoint  = 0
+            , scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
               scoreGameId = dummyKey
             , scoreQuarter = Extension
-            , scoreTeamAScore  = 0
-            , scoreTeamBScore  = 0
+            , scoreTeamAPoint  = 0
+            , scoreTeamBPoint  = 0
           }
       ]
   }

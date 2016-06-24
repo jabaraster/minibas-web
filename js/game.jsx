@@ -4,8 +4,8 @@ import { Provider }    from 'react-redux'
 import { render }      from 'react-dom'
 import * as actions    from './actions/game'
 import app             from './reducers/game'
+import Lib             from './lib/lib'
 import Ajaxer          from './lib/ajaxer'
-import lib             from './lib/lib'
 import RootComponent   from './containers/Game'
 
 const store = createStore(app, {})
@@ -24,5 +24,7 @@ $(() => {
             </Provider>,
             document.getElementById('content')
         )
+        Lib.hideInitialLoadingIcon()
+        Lib.setUpWindowUnloadAlert()
     })
 })

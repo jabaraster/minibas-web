@@ -3,23 +3,15 @@ function games(state={}, action) {
         case 'INITIALIZE_GAMES': {
             return { games: action.games }
         }
-        case 'EDIT_GAME': {
-            const newGames = [].concat(state)
-            const target = newGames[action.gameIndex]
-            target.edit = !target.edit
-            return newGames
-        }
-        case 'SET_TEAM_A_NAME': {
-            const newGames = [].concat(state)
-            const target = newGames[action.gameIndex]
-            target.teamA.name = action.name
-            return newGames
-        }
-        case 'SET_TEAM_B_NAME': {
-            const newGames = [].concat(state)
-            const target = newGames[action.gameIndex]
-            target.teamB.name = action.name
-            return newGames
+        case 'DELETE_GAME': {
+            const newGames = [].concat(state.games)
+            const delIdx = newGames.findIndex(game => {
+                return game.game.id === action.gameId
+            })
+            if (delIdx >= 0) {
+                newGames.splice(delIdx, 1)
+            }
+            return  { games: newGames }
         }
         default:
             return state

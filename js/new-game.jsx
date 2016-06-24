@@ -4,7 +4,7 @@ import { Provider }    from 'react-redux'
 import { render }      from 'react-dom'
 import newGame             from './reducers/new-game'
 import Ajaxer          from './lib/ajaxer'
-import lib             from './lib/lib'
+import Lib             from './lib/lib'
 import * as actions    from './actions/new-game'
 import swal            from 'sweetalert'
 import RootComponent   from './containers/NewGame'
@@ -13,7 +13,7 @@ import { combineReducers } from 'redux'
 const store = createStore(newGame)
 
 $(() => {
-    Ajaxer.get(lib.href('empty-game-href')).end((err, res) => {
+    Ajaxer.get(Lib.href('empty-game-href')).end((err, res) => {
         if (Ajaxer.evalError(err)) return
         const state = res.body
         state.wizardState = {
@@ -29,5 +29,7 @@ $(() => {
             </Provider>,
             document.getElementById('content')
         )
+        Lib.hideInitialLoadingIcon()
+        Lib.setUpWindowUnloadAlert()
     })
 })

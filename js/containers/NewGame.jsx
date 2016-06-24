@@ -9,7 +9,7 @@ import ControlLabel  from 'react-bootstrap/lib/ControlLabel'
 import Nav           from 'react-bootstrap/lib/Nav'
 import NavItem       from 'react-bootstrap/lib/NavItem'
 import Ajaxer        from '../lib/ajaxer'
-import lib           from '../lib/lib'
+import Lib           from '../lib/lib'
 import * as actions  from '../actions/new-game'
 
 const WizardMenu = connect(state => { return state.wizardState })
@@ -43,6 +43,7 @@ const FirstPane = connect((_, props) => { return props })(({game,dispatch}) => {
             <FormControl
                type="text"
                value={game.name}
+               placeholder='(省略化)'
                onChange={e => onNameChange(e)}
             />
           </FormGroup>
@@ -51,6 +52,7 @@ const FirstPane = connect((_, props) => { return props })(({game,dispatch}) => {
             <FormControl
                type="text"
                value={game.place}
+               placeholder='(省略化)'
                onChange={e => onPlaceChange(e)}
             />
           </FormGroup>
@@ -72,6 +74,7 @@ const SecondPane = connect((_, props) => { return props })(({game,dispatch}) => 
             <FormControl
                type="text"
                value={game.teamAName}
+               placeholder='(省略化)'
                onChange={e => onTeamANameChange(e)}
             />
           </FormGroup>
@@ -80,6 +83,7 @@ const SecondPane = connect((_, props) => { return props })(({game,dispatch}) => 
             <FormControl
                type="text"
                value={game.teamBName}
+               placeholder='(省略化)'
                onChange={e => onTeamBNameChange(e)}
             />
           </FormGroup>
@@ -96,6 +100,15 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
         if (wizardState.activeKey >= wizardState.panes.length - 1) return;
         dispatch(actions.changeWizardPane(wizardState.activeKey + 1))
     }
+    const now = () => {
+        const ret = new Date()
+        return [ret.getFullYear(), ret.getMonth()+1, ret.getDate()].join('/')
+             + ' ' + [ret.getHours(), ret.getMinutes(), ret.getSeconds()].join(':')
+    }
+    const setIfNull = (obj, propName, value) => {
+        const val = obj[propName]
+        if (!val.trim()) obj[propName] = value
+    }
     const save = () => {
         swal({
             title: '',
@@ -107,8 +120,13 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
         },
         (isConfirm) => {
             if (!isConfirm) return
-            Ajaxer.put(lib.href('game-index-href')).
-                send({game,score}).
+            const game_ = Object.assign({}, game)
+            setIfNull(game_, 'name', now() + 'の試合')
+            setIfNull(game_, 'teamAName', 'チームA')
+            setIfNull(game_, 'teamBName', 'チームB')
+
+            Ajaxer.put(Lib.href('game-index-href')).
+                send({game: game_,score,editUrl: ''}).
                 end((err, res) => {
                     if (Ajaxer.evalError(err)) return
                   console.log(res)
@@ -136,7 +154,7 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
     return (
         <div className="new-game">
           <ButtonToolbar>
-            <a className="btn btn-default" href={lib.href('game-index-ui-href')}>
+            <a className="btn btn-default" href={Lib.href('game-index-ui-href')}>
               <Glyphicon glyph="arrow-left" />
               キャンセル
             </a>

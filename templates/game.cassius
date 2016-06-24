@@ -1,0 +1,61 @@
+
+div.menu
+  background: rgba(255,255,230,.8)
+  box-shadow: 10px 10px 5px 5px rgba(50,50,50,.5)
+  font-size: 150%
+  a
+    display: block
+    border-bottom: solid 1px rgba(30,30,30,.5)
+    box-shadow: 0 1px 1px 1px rgba(255,255,255,.5)
+    text-decoration: none
+    color: #{cssBaseColor}
+    padding: 10px
+  a:hover
+    background: rgba(255,200,200,1)
+
+div.menu-close
+  display: none
+
+div.menu-open
+  position: absolute
+  height: 100%
+  width: 70%
+  float: left
+  z-index: 100
+
+div.main-content
+  width: 100%
+  z-index: 1
+  .team
+    font-size: 200%
+    vertical-align: top
+
+div.score
+  width: 100%
+  height: 100%
+
+.team-a, .quarter-scores, .team-b
+  display: inline-block
+  text-align: center
+
+.team-a, .team-b
+  width: 20%
+
+.quarter-scores
+    width: 55%
+    color: #{cssBaseColor}
+
+div.quarter-score
+  margin-top: 10px
+
+  .form-control
+    display: inline
+    width: 35%
+    font-size: 150%
+    text-align: center
+    border: none
+
+  .connector
+    display: inline-block
+    width: 10%
+    text-align: center

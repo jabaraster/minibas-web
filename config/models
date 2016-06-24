@@ -17,8 +17,8 @@ Game json
 Score json
     gameId GameId
     quarter Quarter
-    teamAScore Int
-    teamBScore Int
+    teamAPoint Int
+    teamBPoint Int
     UniqueScore gameId quarter
     deriving Show Read Eq
 

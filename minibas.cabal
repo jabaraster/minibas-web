@@ -27,6 +27,7 @@ library
                      ModelDef
                      Minibas.Types
                      Minibas.Web
+                     Minibas.Css
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT

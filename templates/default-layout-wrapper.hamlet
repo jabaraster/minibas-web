@@ -16,6 +16,10 @@ $newline never
 
     ^{pageHead pc}
   <body>
+    <div #screen-all>
+      <div class="cssload-wrap">
+        <div class="cssload-cssload-spinner">
+
     <div class="container">
       <header>
       <div id="main" role="main">

@@ -1,18 +1,18 @@
 
-import React         from 'react'
+import React           from 'react'
 import { createStore } from 'redux'
 import { render }      from 'react-dom'
 import { Provider }    from 'react-redux'
-import { connect }   from 'react-redux'
-import FormGroup     from 'react-bootstrap/lib/FormGroup'
-import FormControl   from 'react-bootstrap/lib/FormControl'
+import { connect }     from 'react-redux'
+import FormGroup       from 'react-bootstrap/lib/FormGroup'
+import FormControl     from 'react-bootstrap/lib/FormControl'
+import Lib             from './lib/lib'
 
 function changeInput(value) {
     return { type: 'CHANGE_INPUT', value }
 }
 
 function reducer(state, action) {
-  console.log(state)
     switch (action.type) {
         case 'CHANGE_INPUT': {
             const ret = JSON.parse(JSON.stringify(state))
@@ -63,3 +63,4 @@ render(
     </Provider>,
     document.getElementById('content')
 )
+Lib.hideInitialLoadingIcon()

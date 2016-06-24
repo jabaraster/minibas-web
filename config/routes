@@ -12,4 +12,4 @@
 
 /games/index GameIndexR GET PUT
 /games/empty EmptyGameR GET
-/games/!#GameId GameR GET POST
+/games/!#GameId GameR GET POST DELETE

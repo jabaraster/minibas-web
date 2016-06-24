@@ -2,14 +2,14 @@ module Foundation where
 
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
-import Import.NoFoundation
-import Text.Hamlet          (hamletFile)
-import Text.Jasmine         (minifym)
-import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
-import Yesod.Core.Types     (Logger)
+import           Database.Persist.Sql (ConnectionPool, runSqlPool)
+import           Import.NoFoundation
+import           Text.Hamlet          (hamletFile)
+import           Text.Jasmine         (minifym)
+import           Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
+import           Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
-import Yesod.Default.Util   (addStaticContentExternal)
+import           Yesod.Default.Util   (addStaticContentExternal)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
