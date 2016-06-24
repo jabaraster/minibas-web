@@ -148,12 +148,12 @@ instance YesodAuth App where
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> Authenticated <$> insert User
-                {userName = "hoge"
-                ,userPassword = "password"
-                ,userEmailAddress = ""
-                ,userVerified = False
-                ,userVerifyKey = ""
-                ,userResetPasswordKey = ""
+                {_userName = "hoge"
+                ,_userPassword = "password"
+                ,_userEmailAddress = ""
+                ,_userVerified = False
+                ,_userVerifyKey = ""
+                ,_userResetPasswordKey = ""
                 }
 
     -- You can add other plugins like Google Email, email or OAuth here

@@ -49,13 +49,16 @@ const Game = ({game,score,uiState,dispatch}) => {
     return (
         <Clearfix>
           <div className={menuClass}>
+            <Button bsSize="large" onClick={onMenuClick}>
+              <Glyphicon glyph="remove" />
+            </Button>
             <a href={Lib.href('game-index-ui-href')}>
               <Glyphicon glyph="home" />
               ホーム
             </a>
           </div>
           <div className={contentClass}>
-            <Button onClick={onMenuClick}>
+            <Button bsSize="large" onClick={onMenuClick}>
               <Glyphicon glyph="list" />
             </Button>
             <h1>{game.name}</h1>

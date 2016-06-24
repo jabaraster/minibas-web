@@ -1,6 +1,6 @@
 
 div.menu
-  background: rgba(255,255,230,.8)
+  background: rgba(255,255,230,.9)
   box-shadow: 10px 10px 5px 5px rgba(50,50,50,.5)
   font-size: 150%
   a
@@ -9,9 +9,10 @@ div.menu
     box-shadow: 0 1px 1px 1px rgba(255,255,255,.5)
     text-decoration: none
     color: #{cssBaseColor}
+    background: rgba(255,255,255,1)
     padding: 10px
   a:hover
-    background: rgba(255,200,200,1)
+    background: rgba(255,230,230,1)
 
 div.menu-close
   display: none

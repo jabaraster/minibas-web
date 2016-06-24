@@ -7,14 +7,15 @@ import Import
 
 import           Control.Lens
 import qualified Data.List as L (sortBy)
-import           Jabara.Persist.Util (dummyKey, toRecord, toKey)
+import           Jabara.Persist.Util (dummyKey, toRecord)
 import           Jabara.Yesod.Util (getResourcePath)
 
 getGameIndexR :: Handler [VOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
   >>= mapM (\game -> entityToVo game [])
 
--- entityToVo :: Entity Game -> [Entity Score] -> Handler VOGame
+entityToVo :: (MonadHandler m, HandlerSite m ~ App) =>
+              Entity Game -> [Entity Score] -> m VOGame
 entityToVo game@(Entity key _) score = do
     path <- getResourcePath $ GameUiR key
     pure $ VOGame {
@@ -28,24 +29,24 @@ putGameIndexR = do
     req::VOGame <- requireJsonBody
     gameId <- runDB $ do
                   gameId <- insert $ toRecord $ req^.voGameGame
-                  _      <- mapM (\s -> insert (toRecord s) { scoreGameId = gameId }) $ req^.voGameScore
+                  _      <- insertMany $ map (\s -> (toRecord s)&scoreGameId .~ gameId) $ req^.voGameScore
                   pure gameId
     sendResponseCreated $ GameUiR gameId
 
 getGameR :: GameId -> Handler VOGame
 getGameR gameId = do
-    game <- runDB $ core gameId
+    game <- runDB $ core
     path <- getResourcePath $ GameUiR gameId
     pure $ game&voGameEditUrl .~ path
 
   where
-    core :: MonadIO m => GameId -> ReaderT SqlBackend m VOGame
-    core gameId = do
+    core :: MonadIO m => ReaderT SqlBackend m VOGame
+    core = do
         game <- get404 gameId
         scores <- selectList [ScoreGameId ==. gameId] []
                     >>= pure . L.sortBy (
-                            \r l -> let r' = scoreQuarter $ toRecord r
-                                        l' = scoreQuarter $ toRecord l
+                            \r l -> let r' = (toRecord r)^.scoreQuarter
+                                        l' = (toRecord l)^.scoreQuarter
                                     in  compare r' l'
                         )
         pure $ VOGame {
@@ -67,43 +68,43 @@ getEmptyGameR = do
     now <- liftIO $ getCurrentTime
     pure $ VOGame {
       _voGameGame = Entity dummyKey $ Game {
-          gameName = ""
-        , gamePlace = ""
-        , gameTeamAName = ""
-        , gameTeamBName = ""
-        , gameDate = now
+          _gameName = ""
+        , _gamePlace = ""
+        , _gameTeamAName = ""
+        , _gameTeamBName = ""
+        , _gameDate = now
       }
     , _voGameEditUrl = ""
     , _voGameScore = [
           Entity dummyKey $ Score {
-              scoreGameId = dummyKey
-            , scoreQuarter = First
-            , scoreTeamAPoint  = 0
-            , scoreTeamBPoint  = 0
+              _scoreGameId = dummyKey
+            , _scoreQuarter = First
+            , _scoreTeamAPoint  = 0
+            , _scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
-              scoreGameId = dummyKey
-            , scoreQuarter = Second
-            , scoreTeamAPoint  = 0
-            , scoreTeamBPoint  = 0
+              _scoreGameId = dummyKey
+            , _scoreQuarter = Second
+            , _scoreTeamAPoint  = 0
+            , _scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
-              scoreGameId = dummyKey
-            , scoreQuarter = Third
-            , scoreTeamAPoint  = 0
-            , scoreTeamBPoint  = 0
+              _scoreGameId = dummyKey
+            , _scoreQuarter = Third
+            , _scoreTeamAPoint  = 0
+            , _scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
-              scoreGameId = dummyKey
-            , scoreQuarter = Fourth
-            , scoreTeamAPoint  = 0
-            , scoreTeamBPoint  = 0
+              _scoreGameId = dummyKey
+            , _scoreQuarter = Fourth
+            , _scoreTeamAPoint  = 0
+            , _scoreTeamBPoint  = 0
           }
         , Entity dummyKey $ Score {
-              scoreGameId = dummyKey
-            , scoreQuarter = Extension
-            , scoreTeamAPoint  = 0
-            , scoreTeamBPoint  = 0
+              _scoreGameId = dummyKey
+            , _scoreQuarter = Extension
+            , _scoreTeamAPoint  = 0
+            , _scoreTeamBPoint  = 0
           }
       ]
   }
