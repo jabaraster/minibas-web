@@ -16,6 +16,10 @@ $newline never
 
     ^{pageHead pc}
   <body>
+    <div #screen-all>
+      <div class="cssload-wrap">
+        <div class="cssload-cssload-spinner">
+
     <div class="container">
       <header>
       <div id="main" role="main">
@@ -53,3 +57,9 @@ $newline never
 
     <script>
       document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/,'js');
+
+    <div .hidden>
+      <a href=@{GameIndexR} #game-index-href>
+      <a href=@{GameIndexUiR} #game-index-ui-href>
+      <a href=@{NewGameUiR} #new-game-href>
+      <a href=@{EmptyGameR} #empty-game-href>

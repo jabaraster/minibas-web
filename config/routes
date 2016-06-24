@@ -4,6 +4,12 @@
 /favicon.ico FaviconR GET
 /robots.txt RobotsR GET
 
-/ HomeR GET
+/sandbox SandboxR GET
 
-/games.json GameJsonR GET
+/ GameIndexUiR GET
+/games/new/ui NewGameUiR GET
+/games/!#GameId/ui GameUiR GET
+
+/games/index GameIndexR GET PUT
+/games/empty EmptyGameR GET
+/games/!#GameId GameR GET POST DELETE

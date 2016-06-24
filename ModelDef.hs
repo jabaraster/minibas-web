@@ -7,7 +7,7 @@ module ModelDef (
 import ClassyPrelude.Yesod
 
 data Quarter = First | Second | Third | Fourth | Extension
-    deriving (Show, Read, Eq, Enum, Bounded, Generic)
+    deriving (Show, Read, Eq, Ord, Enum, Bounded, Generic)
 derivePersistField "Quarter"
 instance ToJSON Quarter
 instance FromJSON Quarter

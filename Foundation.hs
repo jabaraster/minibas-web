@@ -2,14 +2,14 @@ module Foundation where
 
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
-import Import.NoFoundation
-import Text.Hamlet          (hamletFile)
-import Text.Jasmine         (minifym)
-import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
-import Yesod.Core.Types     (Logger)
+import           Database.Persist.Sql (ConnectionPool, runSqlPool)
+import           Import.NoFoundation
+import           Text.Hamlet          (hamletFile)
+import           Text.Jasmine         (minifym)
+import           Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
+import           Yesod.Core.Types     (Logger)
 import qualified Yesod.Core.Unsafe as Unsafe
-import Yesod.Default.Util   (addStaticContentExternal)
+import           Yesod.Default.Util   (addStaticContentExternal)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -56,7 +56,7 @@ instance Yesod App where
     -- Store session data on the client in encrypted cookies,
     -- default session idle timeout is 120 minutes
     makeSessionBackend _ = Just <$> defaultClientSessionBackend
-        120    -- timeout in minutes
+        (24 * 60)    -- timeout in minutes
         "config/client_session_key.aes"
 
     -- Yesod Middleware allows you to run code before and after each handler function.
@@ -137,9 +137,9 @@ instance YesodAuth App where
     type AuthId App = UserId
 
     -- Where to send a user after successful login
-    loginDest _ = HomeR
+    loginDest _ = GameIndexUiR
     -- Where to send a user after logout
-    logoutDest _ = HomeR
+    logoutDest _ = GameIndexUiR
     -- Override the above two destinations when a Referer: header is present
     redirectToReferer _ = True
 

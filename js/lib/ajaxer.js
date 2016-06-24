@@ -2,7 +2,7 @@
 import request from 'superagent'
 import swal    from 'sweetalert'
 
-export default = {
+export default {
     post(pUrl) {
         return request.post(pUrl)
                .set(csrfHeaderName, csrfToken)

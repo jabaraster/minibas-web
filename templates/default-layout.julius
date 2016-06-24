@@ -1,0 +1,7 @@
+(function() {
+  'use strict';
+  $(function() {
+    $(window).on('beforeunload', function(e) {
+    });
+  });
+})(jQuery)
