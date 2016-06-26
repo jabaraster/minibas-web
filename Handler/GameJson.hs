@@ -14,21 +14,20 @@ import           Jabara.Yesod.Util (getResourcePath)
 
 getGameIndexR :: Handler [VOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
-  >>= mapM (\game -> entityToVo game [])
+  >>= mapM entityToVo
 
 scoreUrls :: (MonadHandler m, HandlerSite m ~ App) => GameId -> m [Text]
 scoreUrls gameId = do
-    firstUrl <- getResourcePath $ GameScoreFirstR gameId
+    firstUrl  <- getResourcePath $ GameScoreFirstR gameId
     secondUrl <- getResourcePath $ GameScoreSecondR gameId
-    thirdUrl <- getResourcePath $ GameScoreThirdR gameId
+    thirdUrl  <- getResourcePath $ GameScoreThirdR gameId
     fourthUrl <- getResourcePath $ GameScoreFourthR gameId
-    extraUrl <- getResourcePath $ GameScoreExtraR gameId
+    extraUrl  <- getResourcePath $ GameScoreExtraR gameId
     pure [firstUrl, secondUrl, thirdUrl, fourthUrl, extraUrl]
 
 
-entityToVo :: (MonadHandler m, HandlerSite m ~ App) =>
-              Entity Game -> [Entity Score] -> m VOGame
-entityToVo game@(Entity key _) score = do
+entityToVo :: (MonadHandler m, HandlerSite m ~ App) => Entity Game -> m VOGame
+entityToVo game@(Entity key _) = do
     editPath <- getResourcePath $ GameUiR key
     path     <- getResourcePath $ GameR key
     urls     <- scoreUrls key
@@ -37,7 +36,7 @@ entityToVo game@(Entity key _) score = do
       , _voGameEditUrl = editPath
       , _voGameUrl = path
       , _voGameScoreUrls = urls
-      , _voGameScore = score
+      , _voGameScore = []
     }
 
 putGameIndexR :: Handler ()
