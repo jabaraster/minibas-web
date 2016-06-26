@@ -74,7 +74,7 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
             showConfirmButton: false,
         })
         Ajaxer.post(url)
-            .send({game,score,editUrl:'',url:''})
+            .send({game,score,editUrl:'',url:'',scoreUrls:[]})
             .end((err,res) => {
             if (Ajaxer.evalError(err)) return
             swal.close()

@@ -7,8 +7,8 @@ module Handler.GameJson where
 import Import
 
 import           Control.Lens
-import qualified Data.Aeson.Lens as AL (key, _Bool)
-import qualified Data.List as L (sortBy)
+import qualified Data.Aeson.Lens as AL (key, _Bool, _Integer)
+import qualified Data.List as L (sortBy, foldl)
 import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
 import           Jabara.Yesod.Util (getResourcePath)
 
@@ -89,31 +89,51 @@ deleteGameR gameId = runDB $ do
 
 type QuarterIndex = Int
 
-patchGameScoreFirstR :: GameId -> Handler ()
+patchGameScoreFirstR :: GameId -> Handler (Entity Score)
 patchGameScoreFirstR gameId = patchGameScore gameId First
 
-patchGameScoreSecondR :: GameId -> Handler ()
+patchGameScoreSecondR :: GameId -> Handler (Entity Score)
 patchGameScoreSecondR gameId = patchGameScore gameId Second
 
-patchGameScoreThirdR :: GameId -> Handler ()
+patchGameScoreThirdR :: GameId -> Handler (Entity Score)
 patchGameScoreThirdR gameId = patchGameScore gameId Third
 
-patchGameScoreFourthR :: GameId -> Handler ()
+patchGameScoreFourthR :: GameId -> Handler (Entity Score)
 patchGameScoreFourthR gameId = patchGameScore gameId Fourth
 
-patchGameScoreExtraR :: GameId -> Handler ()
+patchGameScoreExtraR :: GameId -> Handler (Entity Score)
 patchGameScoreExtraR gameId = patchGameScore gameId Extra
 
-patchGameScore :: GameId -> Quarter -> Handler ()
+patchGameScore :: GameId -> Quarter -> Handler (Entity Score)
 patchGameScore gameId quarter = do
     req::Value <- requireJsonBody
-    (Entity key score) <- runDB $ getBy404 $ UniqueScore gameId quarter
-    case req ^? AL.key "lock" . AL._Bool of
-        Nothing -> pure ()
-        Just (b::Bool)  -> do
-                     score' <- pure $ score&scoreLock .~ b
-                     _      <- runDB $ replace key score'
-                     pure ()
+    eScore@(Entity key score) <- runDB $ getBy404 $ UniqueScore gameId quarter
+    _ <- case req of
+             Object _ -> pure req
+             _        -> sendResponseStatus badRequest400 eScore
+    let ps::[(Score -> Score)] = [
+                (\sc -> case req ^? AL.key "lock" . AL._Bool of
+                            Nothing -> sc
+                            Just b  -> sc&scoreLock .~ b
+                )
+              , (\sc -> case req ^? AL.key "teamAPoint" . AL._Integer of
+                            Nothing -> sc
+                            Just p  -> sc&scoreTeamAPoint .~ (fromInteger p)
+                )
+              , (\sc -> case req ^? AL.key "teamBPoint" . AL._Integer of
+                            Nothing -> sc
+                            Just p  -> sc&scoreTeamBPoint .~ (fromInteger p)
+                )
+              ]
+        score' = L.foldl (\sc f -> f sc) score ps
+    _ <- runDB $ replace key score'
+    pure $ Entity key score'
+--     case dev ^? AL.key "lock" . AL._Bool of
+--         Nothing -> sendResponseStatus badRequest400 eScore
+--         Just b  -> do
+--                      score' <- pure $ score&scoreLock .~ b
+--                      _      <- runDB $ replace key score'
+--                      pure $ Entity key score'
 
 getEmptyGameR :: Handler VOGame
 getEmptyGameR = do
