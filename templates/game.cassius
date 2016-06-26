@@ -55,8 +55,15 @@ div.quarter-score
     font-size: 150%
     text-align: center
     border: none
+  span.form-control
+    background: none
+    display: inline-block
 
   .connector
     display: inline-block
     width: 10%
     text-align: center
+
+  .lock-control
+    margin-left: 10px
+    font-size: 150%

@@ -1,7 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Minibas.Types (
-    VOGame(..), voGameGame, voGameEditUrl, voGameScore
+    VOGame(..), voGameGame, voGameEditUrl, voGameUrl, voGameScore, voGameScoreUrls
 ) where
 
 import ClassyPrelude.Yesod
@@ -12,9 +12,11 @@ import Jabara.Yesod.Util (tc, ttc)
 import Model (Score, Game)
 
 data VOGame = VOGame {
-    _voGameGame :: Entity Game
-  , _voGameEditUrl :: Text
-  , _voGameScore :: [Entity Score]
+    _voGameGame      :: Entity Game
+  , _voGameEditUrl   :: Text
+  , _voGameUrl       :: Text
+  , _voGameScore     :: [Entity Score]
+  , _voGameScoreUrls :: [Text]
 } deriving (Show, Eq, Read, Generic)
 makeLenses ''VOGame
 $(deriveJSON defaultOptions {

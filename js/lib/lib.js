@@ -49,4 +49,8 @@ export default {
             });
         });
     },
+    firstCharLowerCase(p) {
+        if (p === '') return ''
+        return p.charAt(0).toLowerCase() + p.substr(1)
+    },
 }

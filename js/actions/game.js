@@ -6,6 +6,10 @@ export function changeTeamPoint(quarterIndex, teamAorB, value) {
     return { type: 'CHANGE_TEAM_POINT', quarterIndex, teamAorB, value }
 }
 
+export function changeLock(quarterIndex, lock) {
+    return { type: 'CHANGE_LOCK', quarterIndex, lock }
+}
+
 export function uiChangeMenuOpen(menuOpen) {
     return { type: 'UI_CHANGE_MENU_OPEN', menuOpen }
 }

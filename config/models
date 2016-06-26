@@ -19,6 +19,7 @@ Score json
     quarter Quarter
     teamAPoint Int
     teamBPoint Int
+    lock Bool
     UniqueScore gameId quarter
     deriving Show Read Eq
 

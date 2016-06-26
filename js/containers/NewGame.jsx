@@ -126,7 +126,7 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
             setIfNull(game_, 'teamBName', 'チームB')
 
             Ajaxer.put(Lib.href('game-index-href')).
-                send({game: game_,score,editUrl: ''}).
+                send({game: game_,score,editUrl:'',url:''}).
                 end((err, res) => {
                     if (Ajaxer.evalError(err)) return
                   console.log(res)
