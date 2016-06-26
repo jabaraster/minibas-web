@@ -2,34 +2,29 @@
 import request from 'superagent'
 import swal    from 'sweetalert'
 
+function exec(pUrl, methodName) {
+   return request[methodName](pUrl)
+          .set(csrfHeaderName, csrfToken)
+          .type('json')
+          .accept('json')
+          ;
+}
+
 export default {
     post(pUrl) {
-        return request.post(pUrl)
-               .set(csrfHeaderName, csrfToken)
-               .type('json')
-               .accept('json')
-               ;
+        return exec(pUrl, 'post');
     },
     get(pUrl) {
-        return request.get(pUrl)
-               .set(csrfHeaderName, csrfToken)
-               .type('json')
-               .accept('json')
-               ;
+        return exec(pUrl, 'get');
     },
     put(pUrl) {
-        return request.put(pUrl)
-               .set(csrfHeaderName, csrfToken)
-               .type('json')
-               .accept('json')
-               ;
+        return exec(pUrl, 'put');
     },
     del(pUrl) {
-        return request.del(pUrl)
-               .set(csrfHeaderName, csrfToken)
-               .type('json')
-               .accept('json')
-               ;
+        return exec(pUrl, 'del');
+    },
+    patch(pUrl) {
+        return exec(pUrl, 'patch');
     },
     evalError(pError) {
         if (pError) {

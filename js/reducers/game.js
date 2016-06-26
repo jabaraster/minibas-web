@@ -13,6 +13,16 @@ function game(state, action) {
 
             return ret
         }
+        case 'CHANGE_LOCK': {
+            const ret = Object.assign({}, state)
+            ret.score = [].concat(ret.score)
+
+            const quarterIndex = action.quarterIndex
+            ret.score[quarterIndex] = Object.assign({}, ret.score[quarterIndex])
+            ret.score[quarterIndex].lock = action.lock
+
+            return ret
+        }
         case 'UI_CHANGE_MENU_OPEN': {
             const ret = Object.assign({}, state)
             ret.uiState = Object.assign({}, state.uiState,

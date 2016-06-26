@@ -89,8 +89,10 @@ library
                  , time
                  , case-insensitive
                  , wai
+                 , http-types
 
                  , lens
+                 , lens-aeson
 
                  , jabara-util
                  , jabara-persist-util

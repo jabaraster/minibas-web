@@ -18,7 +18,13 @@ const Games = ({games, dispatch}) => {
             () => {
                 Ajaxer.del('/games/' + gameId).end((err, res) => {
                     if (Ajaxer.evalError(err)) return
-                    swal('削除しました！', '', 'success')
+                    swal({
+                        title: '削除しました！',
+                        text: '',
+                        type: 'success',
+                        showConfirmButton: false,
+                        timer: 1000,
+                    })
                     dispatch(actions.deleteGame(gameId))
                 })
         })
