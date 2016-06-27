@@ -126,10 +126,9 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
             setIfNull(game_, 'teamBName', 'チームB')
 
             Ajaxer.put(Lib.href('game-index-href')).
-                send({game: game_,score,editUrl:'',url:''}).
+                send({game: game_,score,editUrl:'',url:'',scoreUrls:[]}).
                 end((err, res) => {
                     if (Ajaxer.evalError(err)) return
-                  console.log(res)
                     swal({
                         title: '保存完了！',
                         text: '試合を表示します。',
