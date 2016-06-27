@@ -53,4 +53,7 @@ export default {
         if (p === '') return ''
         return p.charAt(0).toLowerCase() + p.substr(1)
     },
+    returnProps(_, props) {
+        return props
+    },
 }

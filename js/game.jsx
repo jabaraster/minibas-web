@@ -16,6 +16,7 @@ $(() => {
         const state = res.body
         state.uiState = {
             menuOpen: false,
+            editDialogOpen: false,
         }
         store.dispatch(actions.initialzeGame(state))
         render(
