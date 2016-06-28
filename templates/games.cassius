@@ -15,5 +15,8 @@ table.table
   a.game-name:hover
     background: rgba(255,200,200,1)
 
+  ul.game-result
+    display: inline-block
+
   .btn-danger
     margin-left: 10px

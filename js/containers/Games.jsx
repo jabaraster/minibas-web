@@ -33,7 +33,9 @@ const Games = ({games, dispatch}) => {
         return (
             <tr key={'game_'+idx}>
               <td className="game-name">
-                <a className="game-name" href={editUrl}>{game.name}</a>
+                <a className="game-name" href={editUrl}>
+                  {game.name}
+                </a>
               </td>
               <td>
                 <Button bsStyle="primary" onClick={() => { editGame(editUrl) }}>
