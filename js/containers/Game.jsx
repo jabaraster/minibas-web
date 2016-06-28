@@ -3,14 +3,17 @@ import { connect }    from 'react-redux'
 import ButtonToolbar  from 'react-bootstrap/lib/ButtonToolbar'
 import Button         from 'react-bootstrap/lib/Button'
 import Glyphicon      from 'react-bootstrap/lib/Glyphicon'
+import ControlLabel   from 'react-bootstrap/lib/ControlLabel'
+import FormGroup      from 'react-bootstrap/lib/FormGroup'
 import FormControl    from 'react-bootstrap/lib/FormControl'
+import Modal          from 'react-bootstrap/lib/Modal'
 import classnames     from 'classnames';
 import Clearfix       from 'react-bootstrap/lib/Clearfix'
 import * as actions   from '../actions/game'
 import Lib            from '../lib/lib'
 import Ajaxer         from '../lib/ajaxer'
 
-const QuarterScore = connect((_,props) => { return props })
+const QuarterScore = connect(Lib.returnProps)
   (({data,quarterIndex,url,connector,dispatch}) => {
     const selectAll = e => {
         e.target.select()
@@ -61,6 +64,72 @@ const QuarterScore = connect((_,props) => { return props })
     )
 })
 
+const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) => {
+    const save = () => {
+        swal({
+            title: '保存中...',
+            text: '',
+            type: 'info',
+            showCancelButton: false,
+            showConfirmButton: false,
+        })
+        Ajaxer.post(url)
+            .send({game,score,editUrl:'',url:'',scoreUrls:[]})
+            .end((err,res) => {
+            if (Ajaxer.evalError(err)) return
+            swal.close()
+            dispatch(actions.changeGame(game))
+            dispatch(actions.uiChangeEditDialogOpen(false))
+            dispatch(actions.uiChangeMenuOpen(false))
+        })
+    }
+    const onCancel = () => {
+        dispatch(actions.uiChangeEditDialogOpen(false))
+    }
+    const setValue = (propName, value) => {
+        game[propName] = value
+        dispatch(actions.changeGame(game))
+    }
+    return (
+       <Modal show={uiState.editDialogOpen}>
+         <Modal.Body>
+           <FormGroup>
+             <ControlLabel>試合の名前</ControlLabel>
+             <FormControl type="text"
+                 value={game.name}
+                 onChange={e => { setValue('name', e.target.value) }}
+             />
+           </FormGroup>
+           <FormGroup>
+             <ControlLabel>試合の場所</ControlLabel>
+             <FormControl type="text"
+                 value={game.place}
+                 onChange={e => { setValue('place', e.target.value) }}
+             />
+           </FormGroup>
+           <FormGroup>
+             <ControlLabel>チームAの名前</ControlLabel>
+             <FormControl type="text"
+                 value={game.teamAName}
+                 onChange={e => { setValue('teamAName', e.target.value) }}
+             />
+           </FormGroup>
+           <FormGroup>
+             <ControlLabel>チームBの名前</ControlLabel>
+             <FormControl type="text"
+                 value={game.teamBName}
+                 onChange={e => { setValue('teamBName', e.target.value) }}
+             />
+           </FormGroup>
+         </Modal.Body>
+         <Modal.Footer>
+           <Button onClick={onCancel}>キャンセル</Button>
+           <Button onClick={save} bsStyle="success">OK</Button>
+         </Modal.Footer>
+       </Modal>
+    )
+})
+
 const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
     const onMenuClick = () => {
         dispatch(actions.uiChangeMenuOpen(!uiState.menuOpen))
@@ -80,6 +149,9 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
             swal.close()
         })
     }
+    const onEditClick = () => {
+        dispatch(actions.uiChangeEditDialogOpen(!uiState.editDialogOpen))
+    }
     const menuClass = classnames({
                         'menu': true,
                         'menu-open': uiState.menuOpen,
@@ -91,10 +163,15 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
                          })
     return (
         <Clearfix>
+          <EditDialog game={game} score={score} url={url} uiState={uiState} />
           <div className={menuClass}>
             <Button bsSize="large" onClick={onMenuClick}>
               <Glyphicon glyph="remove" />
             </Button>
+            <a href="#" onClick={onEditClick}>
+              <Glyphicon glyph="pencil" />
+              編集
+            </a>
             <a href={Lib.href('game-index-ui-href')}>
               <Glyphicon glyph="home" />
               ホーム

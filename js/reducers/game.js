@@ -3,6 +3,11 @@ function game(state, action) {
         case 'INITIALIZE_GAME': {
             return action.game
         }
+        case 'CHANGE_GAME': {
+            const ret = Object.assign({}, state)
+            ret.game = Object.assign({}, action.game)
+            return ret
+        }
         case 'CHANGE_TEAM_POINT': {
             const ret = Object.assign({}, state)
             ret.score = [].concat(ret.score)
@@ -21,6 +26,12 @@ function game(state, action) {
             ret.score[quarterIndex] = Object.assign({}, ret.score[quarterIndex])
             ret.score[quarterIndex].lock = action.lock
 
+            return ret
+        }
+        case 'UI_CHANGE_EDIT_DIALOG_OPEN': {
+            const ret = Object.assign({}, state)
+            ret.uiState = Object.assign({}, state.uiState,
+                            {editDialogOpen: action.editDialogOpen})
             return ret
         }
         case 'UI_CHANGE_MENU_OPEN': {

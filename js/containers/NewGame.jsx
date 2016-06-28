@@ -29,7 +29,7 @@ const WizardMenu = connect(state => { return state.wizardState })
     )
 })
 
-const FirstPane = connect((_, props) => { return props })(({game,dispatch}) => {
+const FirstPane = connect(Lib.returnProps)(({game,dispatch}) => {
     const onPlaceChange = (e) => {
         dispatch(actions.changeGamePlace(e.target.value))
     }
