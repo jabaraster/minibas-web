@@ -1,17 +1,17 @@
 function games(state={}, action) {
     switch (action.type) {
         case 'INITIALIZE_GAMES': {
-            return { games: action.games }
+            return { data: action.data }
         }
         case 'DELETE_GAME': {
-            const newGames = [].concat(state.games)
-            const delIdx = newGames.findIndex(game => {
-                return game.game.id === action.gameId
+            const newGames = [].concat(state.data)
+            const delIdx = newGames.findIndex(data => {
+                return data.game.property.id === action.gameId
             })
             if (delIdx >= 0) {
                 newGames.splice(delIdx, 1)
             }
-            return  { games: newGames }
+            return  { data: newGames }
         }
         default:
             return state

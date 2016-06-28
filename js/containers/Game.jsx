@@ -64,7 +64,8 @@ const QuarterScore = connect(Lib.returnProps)
     )
 })
 
-const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) => {
+const EditDialog = connect(Lib.returnProps)
+  (({property,score,url,uiState,dispatch}) => {
     const save = () => {
         swal({
             title: '保存中...',
@@ -73,12 +74,13 @@ const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) 
             showCancelButton: false,
             showConfirmButton: false,
         })
+        const game = {property,score}
         Ajaxer.post(url)
-            .send({game,score,editUrl:'',url:'',scoreUrls:[]})
+            .send(game)
             .end((err,res) => {
             if (Ajaxer.evalError(err)) return
             swal.close()
-            dispatch(actions.changeGame(game))
+            dispatch(actions.changeGameProperty(property))
             dispatch(actions.uiChangeEditDialogOpen(false))
             dispatch(actions.uiChangeMenuOpen(false))
         })
@@ -87,8 +89,8 @@ const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) 
         dispatch(actions.uiChangeEditDialogOpen(false))
     }
     const setValue = (propName, value) => {
-        game[propName] = value
-        dispatch(actions.changeGame(game))
+        property[propName] = value
+        dispatch(actions.changeGameProperty(property))
     }
     return (
        <Modal show={uiState.editDialogOpen}>
@@ -96,28 +98,28 @@ const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) 
            <FormGroup>
              <ControlLabel>試合の名前</ControlLabel>
              <FormControl type="text"
-                 value={game.name}
+                 value={property.name}
                  onChange={e => { setValue('name', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>試合の場所</ControlLabel>
              <FormControl type="text"
-                 value={game.place}
+                 value={property.place}
                  onChange={e => { setValue('place', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>チームAの名前</ControlLabel>
              <FormControl type="text"
-                 value={game.teamAName}
+                 value={property.teamAName}
                  onChange={e => { setValue('teamAName', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>チームBの名前</ControlLabel>
              <FormControl type="text"
-                 value={game.teamBName}
+                 value={property.teamBName}
                  onChange={e => { setValue('teamBName', e.target.value) }}
              />
            </FormGroup>
@@ -130,7 +132,7 @@ const EditDialog = connect(Lib.returnProps)(({game,score,url,uiState,dispatch}) 
     )
 })
 
-const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
+const Game = ({game,urls,uiState,dispatch}) => {
     const onMenuClick = () => {
         dispatch(actions.uiChangeMenuOpen(!uiState.menuOpen))
     }
@@ -142,8 +144,8 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
             showCancelButton: false,
             showConfirmButton: false,
         })
-        Ajaxer.post(url)
-            .send({game,score,editUrl:'',url:'',scoreUrls:[]})
+        Ajaxer.post(urls.game)
+            .send(game)
             .end((err,res) => {
             if (Ajaxer.evalError(err)) return
             swal.close()
@@ -163,7 +165,7 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
                          })
     return (
         <Clearfix>
-          <EditDialog game={game} score={score} url={url} uiState={uiState} />
+          <EditDialog property={game.property} score={game.score} url={urls.game} uiState={uiState} />
           <div className={menuClass}>
             <Button bsSize="large" onClick={onMenuClick}>
               <Glyphicon glyph="remove" />
@@ -189,17 +191,17 @@ const Game = ({game,score,url,scoreUrls,uiState,dispatch}) => {
             <h1>{game.name}</h1>
             <div className="score">
               <div className="team team-a">
-                {game.teamAName}
+                {game.property.teamAName}
               </div>
               <div className="quarter-scores">
-                <QuarterScore data={score[0]} url={scoreUrls[0]} quarterIndex={0} connector="-" />
-                <QuarterScore data={score[1]} url={scoreUrls[1]} quarterIndex={1} connector="-" />
-                <QuarterScore data={score[2]} url={scoreUrls[2]} quarterIndex={2} connector="-" />
-                <QuarterScore data={score[3]} url={scoreUrls[3]} quarterIndex={3} connector="-" />
-                <QuarterScore data={score[4]} url={scoreUrls[4]} quarterIndex={4} connector="延長" />
+                <QuarterScore data={game.score[0]} url={urls.quarter[0]} quarterIndex={0} connector="-" />
+                <QuarterScore data={game.score[1]} url={urls.quarter[1]} quarterIndex={1} connector="-" />
+                <QuarterScore data={game.score[2]} url={urls.quarter[2]} quarterIndex={2} connector="-" />
+                <QuarterScore data={game.score[3]} url={urls.quarter[3]} quarterIndex={3} connector="-" />
+                <QuarterScore data={game.score[4]} url={urls.quarter[4]} quarterIndex={4} connector="延長" />
               </div>
               <div className="team team-b">
-                {game.teamBName}
+                {game.property.teamBName}
               </div>
             </div>
           </div>

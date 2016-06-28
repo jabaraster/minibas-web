@@ -1,31 +1,40 @@
+import Lib from '../lib/lib'
+
+function cloneScore(state, quarterIndex) {
+    const newState = Object.assign({}, state)
+    newState.game  = Object.assign({}, state.game)
+
+    const game = newState.game
+    game.score = [].concat(game.score)
+
+    const score = game.score
+    score[quarterIndex] = Object.assign({}, score[quarterIndex])
+
+    return newState
+}
+
 function game(state, action) {
     switch (action.type) {
         case 'INITIALIZE_GAME': {
             return action.game
         }
-        case 'CHANGE_GAME': {
+        case 'CHANGE_GAME_PROPERTY': {
             const ret = Object.assign({}, state)
-            ret.game = Object.assign({}, action.game)
+            ret.game = Object.assign({}, state.game)
+            ret.game.property = Object.assign({}, action.property)
             return ret
         }
         case 'CHANGE_TEAM_POINT': {
-            const ret = Object.assign({}, state)
-            ret.score = [].concat(ret.score)
-
             const quarterIndex = action.quarterIndex
-            ret.score[quarterIndex] = Object.assign({}, ret.score[quarterIndex])
-            ret.score[quarterIndex]['team'+action.teamAorB+'Point'] = action.value
-
+            const ret = cloneScore(state, quarterIndex)
+            const prop = 'team'+action.teamAorB+'Point'
+            ret.game.score[quarterIndex][prop] = action.value
             return ret
         }
         case 'CHANGE_LOCK': {
-            const ret = Object.assign({}, state)
-            ret.score = [].concat(ret.score)
-
             const quarterIndex = action.quarterIndex
-            ret.score[quarterIndex] = Object.assign({}, ret.score[quarterIndex])
-            ret.score[quarterIndex].lock = action.lock
-
+            const ret = cloneScore(state, quarterIndex)
+            ret.game.score[quarterIndex].lock = action.lock
             return ret
         }
         case 'UI_CHANGE_EDIT_DIALOG_OPEN': {

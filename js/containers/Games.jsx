@@ -8,7 +8,7 @@ import Lib           from '../lib/lib'
 import swal          from 'sweetalert'
 import * as actions  from '../actions/games'
 
-const Games = ({games, dispatch}) => {
+const Games = ({data, dispatch}) => {
     const editGame = (editUrl) => {
         location.href = editUrl
     }
@@ -29,19 +29,19 @@ const Games = ({games, dispatch}) => {
                 })
         })
     }
-    const tagGame = ({game, editUrl}, idx) => {
+    const tagGame = ({game, urls}, idx) => {
         return (
             <tr key={'game_'+idx}>
               <td className="game-name">
-                <a className="game-name" href={editUrl}>
-                  {game.name}
+                <a className="game-name" href={urls.gameEdit}>
+                  {game.property.name}
                 </a>
               </td>
               <td>
-                <Button bsStyle="primary" onClick={() => { editGame(editUrl) }}>
+                <Button bsStyle="primary" onClick={() => { editGame(urls.gameEdit) }}>
                   <Glyphicon glyph="pencil" />
                 </Button>
-                <Button bsStyle="danger" onClick={() => { deleteGame(game.id) }}>
+                <Button bsStyle="danger" onClick={() => { deleteGame(game.property.id) }}>
                   <Glyphicon glyph="trash" />
                 </Button>
               </td>
@@ -58,7 +58,7 @@ const Games = ({games, dispatch}) => {
           <table className="table">
             <thead></thead>
             <tbody>
-              {games.map(tagGame)}
+              {data.map(tagGame)}
             </tbody>
           </table>
         </div>
