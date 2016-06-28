@@ -6,7 +6,7 @@ stanzas:
     args: []
     hosts:
       - localhost
-      - minibasl.jabara.info
+      - minibas.jabara.info
     requires-secure: false
 plugins:
   postgres: true
