@@ -16,8 +16,8 @@ const store = createStore(app, initialState)
 $(() => {
     Ajaxer.get(Lib.href('game-index-href')).end((err, res) => {
         if (Ajaxer.evalError(err)) return
-        const games = res.body
-        if (!games.length) {
+        const datas = res.body
+        if (!datas.length) {
             swal({
                 title: 'ミニバスアプリへようこそ！',
                 text: 'まずは試合情報を作成しましょう！',
@@ -28,7 +28,7 @@ $(() => {
             })
             return
         }
-        store.dispatch(actions.initializeGames(games))
+        store.dispatch(actions.initializeGames(datas))
         render(
             <Provider store={store}>
               <RootComponent />

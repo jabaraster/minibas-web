@@ -2,8 +2,8 @@ export function initialzeGame(game) {
     return { type: 'INITIALIZE_GAME', game }
 }
 
-export function changeGame(game) {
-    return { type: 'CHANGE_GAME', game }
+export function changeGameProperty(property) {
+    return { type: 'CHANGE_GAME_PROPERTY', property}
 }
 
 export function changeTeamPoint(quarterIndex, teamAorB, value) {

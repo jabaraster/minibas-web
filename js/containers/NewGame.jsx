@@ -120,13 +120,12 @@ const NewGame = ({game, score, wizardState, dispatch}) => {
         },
         (isConfirm) => {
             if (!isConfirm) return
-            const game_ = Object.assign({}, game)
-            setIfNull(game_, 'name', now() + 'の試合')
-            setIfNull(game_, 'teamAName', 'チームA')
-            setIfNull(game_, 'teamBName', 'チームB')
+            setIfNull(game.property, 'name', now() + 'の試合')
+            setIfNull(game.property, 'teamAName', 'チームA')
+            setIfNull(game.property, 'teamBName', 'チームB')
 
             Ajaxer.put(Lib.href('game-index-href')).
-                send({game: game_,score,editUrl:'',url:'',scoreUrls:[]}).
+                send(game).
                 end((err, res) => {
                     if (Ajaxer.evalError(err)) return
                     swal({

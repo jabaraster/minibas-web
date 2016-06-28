@@ -12,12 +12,12 @@ import qualified Data.List as L (sortBy, foldl)
 import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
 import           Jabara.Yesod.Util (getResourcePath)
 
-getGameIndexR :: Handler [VOGame]
+getGameIndexR :: Handler [WVOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
   >>= mapM entityToVo
 
-scoreUrls :: (MonadHandler m, HandlerSite m ~ App) => GameId -> m [Text]
-scoreUrls gameId = do
+quarterUrls :: (MonadHandler m, HandlerSite m ~ App) => GameId -> m [Text]
+quarterUrls gameId = do
     firstUrl  <- getResourcePath $ GameScoreFirstR gameId
     secondUrl <- getResourcePath $ GameScoreSecondR gameId
     thirdUrl  <- getResourcePath $ GameScoreThirdR gameId
@@ -26,35 +26,46 @@ scoreUrls gameId = do
     pure [firstUrl, secondUrl, thirdUrl, fourthUrl, extraUrl]
 
 
-entityToVo :: (MonadHandler m, HandlerSite m ~ App) => Entity Game -> m VOGame
+entityToVo :: (MonadHandler m, HandlerSite m ~ App) => Entity Game -> m WVOGame
 entityToVo game@(Entity key _) = do
     editPath <- getResourcePath $ GameUiR key
     path     <- getResourcePath $ GameR key
-    urls     <- scoreUrls key
-    pure $ VOGame {
-        _voGameGame = game
-      , _voGameEditUrl = editPath
-      , _voGameUrl = path
-      , _voGameScoreUrls = urls
-      , _voGameScore = []
+    urls     <- quarterUrls key
+    pure WVOGame {
+        _wvoGameGame = VOGame {
+            _voGameProperty = game
+          , _voGameScore = []
+        }
+      , _wvoGameUrls = GameUrls {
+            _gameUrlsGame = path
+          , _gameUrlsGameEdit = editPath
+          , _gameUrlsQuarter = urls
+        }
     }
 
 putGameIndexR :: Handler ()
 putGameIndexR = do
     req::VOGame <- requireJsonBody
     gameId <- runDB $ do
-                  gameId <- insert $ toRecord $ req^.voGameGame
+                  gameId <- insert $ toRecord $ req^.voGameProperty
                   _      <- insertMany $ map (\s -> (toRecord s)&scoreGameId .~ gameId) $ req^.voGameScore
                   pure gameId
     sendResponseCreated $ GameUiR gameId
 
-getGameR :: GameId -> Handler VOGame
+getGameR :: GameId -> Handler WVOGame
 getGameR gameId = do
     game     <- runDB $ core
     editPath <- getResourcePath $ GameUiR gameId
     path     <- getResourcePath $ GameR gameId
-    urls     <- scoreUrls gameId
-    pure $ game { _voGameEditUrl = editPath, _voGameUrl = path, _voGameScoreUrls = urls }
+    urls     <- quarterUrls gameId
+    pure WVOGame {
+             _wvoGameGame = game
+           , _wvoGameUrls = GameUrls {
+                 _gameUrlsGame = path
+               , _gameUrlsGameEdit = editPath
+               , _gameUrlsQuarter = urls
+             }
+         }
 
   where
     core :: MonadIO m => ReaderT SqlBackend m VOGame
@@ -67,10 +78,7 @@ getGameR gameId = do
                                     in  compare r' l'
                         )
         pure $ VOGame {
-                   _voGameGame = Entity gameId game
-                 , _voGameEditUrl = ""
-                 , _voGameUrl = ""
-                 , _voGameScoreUrls = []
+                   _voGameProperty = Entity gameId game
                  , _voGameScore = scores
                }
 
@@ -78,7 +86,7 @@ postGameR :: GameId -> Handler ()
 postGameR gameId = do
     req::VOGame <- requireJsonBody
     runDB $ do
-        replace gameId (toRecord $ req^.voGameGame)
+        replace gameId (toRecord $ req^.voGameProperty)
         mapM_ (\score -> replace (toKey score) (toRecord score)) $ req^.voGameScore
 
 deleteGameR :: GameId -> Handler ()
@@ -127,62 +135,60 @@ patchGameScore gameId quarter = do
         score' = L.foldl (\sc f -> f sc) score ps
     _ <- runDB $ replace key score'
     pure $ Entity key score'
---     case dev ^? AL.key "lock" . AL._Bool of
---         Nothing -> sendResponseStatus badRequest400 eScore
---         Just b  -> do
---                      score' <- pure $ score&scoreLock .~ b
---                      _      <- runDB $ replace key score'
---                      pure $ Entity key score'
 
-getEmptyGameR :: Handler VOGame
+getEmptyGameR :: Handler WVOGame
 getEmptyGameR = do
     now <- liftIO $ getCurrentTime
-    pure $ VOGame {
-      _voGameGame = Entity dummyKey $ Game {
-          _gameName = ""
-        , _gamePlace = ""
-        , _gameTeamAName = ""
-        , _gameTeamBName = ""
-        , _gameDate = now
+    pure $ WVOGame {
+        _wvoGameUrls = GameUrls {
+                           _gameUrlsGame = ""
+                         , _gameUrlsGameEdit = ""
+                         , _gameUrlsQuarter = []
+                       }
+      , _wvoGameGame = VOGame {
+          _voGameProperty = Entity dummyKey $ Game {
+                                _gameName = ""
+                              , _gamePlace = ""
+                              , _gameTeamAName = ""
+                              , _gameTeamBName = ""
+                              , _gameDate = now
+                            }
+        , _voGameScore = [
+              Entity dummyKey $ Score {
+                  _scoreGameId = dummyKey
+                , _scoreQuarter = First
+                , _scoreTeamAPoint  = 0
+                , _scoreTeamBPoint  = 0
+                , _scoreLock = False
+              }
+            , Entity dummyKey $ Score {
+                  _scoreGameId = dummyKey
+                , _scoreQuarter = Second
+                , _scoreTeamAPoint  = 0
+                , _scoreTeamBPoint  = 0
+                , _scoreLock = False
+              }
+            , Entity dummyKey $ Score {
+                  _scoreGameId = dummyKey
+                , _scoreQuarter = Third
+                , _scoreTeamAPoint  = 0
+                , _scoreTeamBPoint  = 0
+                , _scoreLock = False
+              }
+            , Entity dummyKey $ Score {
+                  _scoreGameId = dummyKey
+                , _scoreQuarter = Fourth
+                , _scoreTeamAPoint  = 0
+                , _scoreTeamBPoint  = 0
+                , _scoreLock = False
+              }
+            , Entity dummyKey $ Score {
+                  _scoreGameId = dummyKey
+                , _scoreQuarter = Extra
+                , _scoreTeamAPoint  = 0
+                , _scoreTeamBPoint  = 0
+                , _scoreLock = False
+              }
+          ]
       }
-    , _voGameEditUrl = ""
-    , _voGameUrl = ""
-    , _voGameScoreUrls = []
-    , _voGameScore = [
-          Entity dummyKey $ Score {
-              _scoreGameId = dummyKey
-            , _scoreQuarter = First
-            , _scoreTeamAPoint  = 0
-            , _scoreTeamBPoint  = 0
-            , _scoreLock = False
-          }
-        , Entity dummyKey $ Score {
-              _scoreGameId = dummyKey
-            , _scoreQuarter = Second
-            , _scoreTeamAPoint  = 0
-            , _scoreTeamBPoint  = 0
-            , _scoreLock = False
-          }
-        , Entity dummyKey $ Score {
-              _scoreGameId = dummyKey
-            , _scoreQuarter = Third
-            , _scoreTeamAPoint  = 0
-            , _scoreTeamBPoint  = 0
-            , _scoreLock = False
-          }
-        , Entity dummyKey $ Score {
-              _scoreGameId = dummyKey
-            , _scoreQuarter = Fourth
-            , _scoreTeamAPoint  = 0
-            , _scoreTeamBPoint  = 0
-            , _scoreLock = False
-          }
-        , Entity dummyKey $ Score {
-              _scoreGameId = dummyKey
-            , _scoreQuarter = Extra
-            , _scoreTeamAPoint  = 0
-            , _scoreTeamBPoint  = 0
-            , _scoreLock = False
-          }
-      ]
   }
