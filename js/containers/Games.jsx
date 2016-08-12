@@ -5,6 +5,7 @@ import Button        from 'react-bootstrap/lib/Button'
 import Glyphicon     from 'react-bootstrap/lib/Glyphicon'
 import Ajaxer        from '../lib/ajaxer'
 import Lib           from '../lib/lib'
+import Ui            from '../lib/ui'
 import swal          from 'sweetalert'
 import * as actions  from '../actions/games'
 
@@ -13,18 +14,12 @@ const Games = ({data, dispatch}) => {
         location.href = editUrl
     }
     const deleteGame = (gameId) => {
-        Lib.doubleConfirm('削除しますか？',
+        Ui.doubleConfirm('削除しますか？',
             '本当に削除しますか？削除すると元に戻せません！',
             () => {
                 Ajaxer.del('/games/' + gameId).end((err, res) => {
                     if (Ajaxer.evalError(err)) return
-                    swal({
-                        title: '削除しました！',
-                        text: '',
-                        type: 'success',
-                        showConfirmButton: false,
-                        timer: 1000,
-                    })
+                    Ui.success('削除しました')
                     dispatch(actions.deleteGame(gameId))
                 })
         })
@@ -37,6 +32,7 @@ const Games = ({data, dispatch}) => {
                   {game.property.name}
                 </a>
               </td>
+              <td>{game.property.league}</td>
               <td>
                 <Button bsStyle="primary" onClick={() => { editGame(urls.gameEdit) }}>
                   <Glyphicon glyph="pencil" />

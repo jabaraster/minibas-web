@@ -11,12 +11,16 @@ League json
     name Text
     UniqueLeague name
     deriving Show Read Eq
+Team json
+    name Text
+    UniqueTeam name
+    deriving Show Read Eq
 Game json
     league LeagueId
     name Text
     place Text
-    teamAName Text
-    teamBName Text
+    teamA TeamId
+    teamB TeamId
     date UTCTime
     UniqueGame name league
     deriving Show Read Eq

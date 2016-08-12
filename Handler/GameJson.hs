@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# OPTIONS_GHC -fdefer-type-errors #-}
 
 module Handler.GameJson where
@@ -8,8 +9,10 @@ import Import
 
 import           Control.Lens
 import qualified Data.Aeson.Lens as AL (key, _Bool, _Integer)
+import           Data.Aeson.TH (deriveJSON, defaultOptions, fieldLabelModifier)
 import qualified Data.List as L (sortBy, foldl)
 import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
+import           Jabara.Util (omittedFirstCharLower)
 import           Jabara.Yesod.Util (getResourcePath)
 import           ModelDef (Quarter(..))
 
@@ -44,14 +47,49 @@ entityToVo game@(Entity key _) = do
         }
     }
 
+data Put = Put {
+    _putLeagueName :: Text
+  , _putGameName :: Text
+  , _putGamePlace :: Text
+  , _putTeamAName :: Text
+  , _putTeamBName :: Text
+} deriving (Show, Eq, Read, Generic)
+makeLenses ''Put
+$(deriveJSON defaultOptions {
+    fieldLabelModifier = omittedFirstCharLower "_put"
+} ''Put)
+
 putGameIndexR :: Handler ()
 putGameIndexR = do
-    req::VOGame <- requireJsonBody
+    put::Put <- requireJsonBody
     gameId <- runDB $ do
-                  gameId <- insert $ toRecord $ req^.voGameProperty
-                  _      <- insertMany $ map (\s -> (toRecord s)&scoreGameId .~ gameId) $ req^.voGameScore
-                  pure gameId
+                leagueId <- insertIfNotExists (UniqueLeague $ put^.putLeagueName)
+                                            (League $ put^.putLeagueName)
+                teamAId  <- insertIfNotExists (UniqueTeam $ put^.putTeamAName)
+                                            (Team $ put^.putTeamAName)
+                teamBId  <- insertIfNotExists (UniqueTeam $ put^.putTeamBName)
+                                            (Team $ put^.putTeamBName)
+                now      <- liftIO $ getCurrentTime
+                game     <- pure $ Game { _gameLeague = leagueId
+                                        , _gameName = put^.putGameName
+                                        , _gamePlace = put^.putGamePlace
+                                        , _gameTeamA = teamAId
+                                        , _gameTeamB = teamBId
+                                        , _gameDate = now
+                                        }
+                gameId <- insert game
+                pure gameId
     sendResponseCreated $ GameUiR gameId
+
+insertIfNotExists :: (MonadIO m, PersistUnique (PersistEntityBackend val),
+    PersistEntity val) =>
+    Unique val -> val -> ReaderT (PersistEntityBackend val) m (Key val)
+
+insertIfNotExists unique creator = do
+  mEntity <- getBy unique
+  case mEntity of
+    Nothing -> insert creator
+    Just e  -> pure $ toKey e
 
 getGameR :: GameId -> Handler WVOGame
 getGameR gameId = do
@@ -151,8 +189,8 @@ getEmptyGameR = do
                                 _gameLeague = dummyKey
                               , _gameName = ""
                               , _gamePlace = ""
-                              , _gameTeamAName = ""
-                              , _gameTeamBName = ""
+                              , _gameTeamA = dummyKey
+                              , _gameTeamB = dummyKey
                               , _gameDate = now
                             }
         , _voGameScore = [

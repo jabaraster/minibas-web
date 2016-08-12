@@ -7,7 +7,7 @@ module Minibas.Web (
 ) where
 
 import Minibas.Types (VOGame)
-import Model (Game, Score, League)
+import Model (Game, Score, League, Team)
 
 import ClassyPrelude.Yesod
 import Control.Lens (makeLenses)
@@ -51,3 +51,6 @@ instance ToTypedContent (Entity Score) where toTypedContent = ttc
 
 instance ToContent [Entity League] where toContent = tc
 instance ToTypedContent [Entity League] where toTypedContent = ttc
+
+instance ToContent [Entity Team] where toContent = tc
+instance ToTypedContent [Entity Team] where toTypedContent = ttc

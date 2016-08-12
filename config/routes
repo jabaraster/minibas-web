@@ -7,7 +7,6 @@
 /sandbox SandboxR GET
 
 / GameIndexUiR GET
-/league/index LeagueIndexR GET
 
 /games/new/ui NewGameUiR GET
 /games/!#GameId/ui GameUiR GET
@@ -20,3 +19,6 @@
 /games/!#GameId/score/third  GameScoreThirdR  PATCH
 /games/!#GameId/score/fourth GameScoreFourthR PATCH
 /games/!#GameId/score/extra  GameScoreExtraR  PATCH
+
+/league/index LeagueIndexR GET
+/team/index TeamIndexR GET

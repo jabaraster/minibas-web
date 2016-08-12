@@ -26,6 +26,7 @@ library
                      Handler.GameJson
                      Handler.GameUi
                      Handler.League
+                     Handler.Team
                      Minibas.Css
                      Minibas.Types
                      Minibas.Web
@@ -115,6 +116,7 @@ test-suite test
     other-modules:     Handler.CommonSpec
                        Handler.GameJson
                        Handler.League
+                       Handler.Team
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall

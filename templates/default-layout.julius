@@ -4,4 +4,49 @@
     $(window).on('beforeunload', function(e) {
     });
   });
+
+
+
+
+    // Ripple Effect
+    // 出展
+    // クリックで波紋を出すエフェクト（Ripple Effect）実装メモ
+    // http://qiita.com/nekoneko-wanwan/items/c9f26ce049bd422e555c
+    var eventName = 'ontouchend' in document ? 'touchstart' : 'mousedown';
+    $(document).on(eventName, '.clickable', function(e) {
+        var _self = this;
+        var x,y;
+        if (e.type === 'mousedown') {
+            x = e.offsetX;
+            y = e.offsetY;
+        } else {
+            // 親要素からの相対位置が欲しいが、touchstartイベントでは
+            // offsetX/offsetYが使えないので、自前で計算する.
+            var evt     = e.originalEvent.changedTouches[0];
+            var off     = $(_self).offset();
+            x = evt.pageX - off.left;
+            y = evt.pageY - off.top;
+        }
+
+        var $effect = $(_self).find('.ripple__effect');
+        var w       = $effect.width();
+        var h       = $effect.height();
+
+        $effect.css({
+            left: x - w / 2,
+            top: y - h / 2
+        });
+
+        if (!$effect.hasClass('is-show')) {
+            $effect.addClass('is-show');
+
+            setTimeout(function() {
+                $effect.removeClass('is-show');
+            }, 750);
+        }
+    });
+
+
+
+
 })(jQuery)
