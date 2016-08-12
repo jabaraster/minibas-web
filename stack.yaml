@@ -11,5 +11,8 @@ packages:
     commit: 4e4d1833486e60e4f8317fa5cb073f2324b66052
 - '.'
 extra-deps: []
-flags: {}
+flags:
+  minibas:
+    library-only: false
+    dev: false
 extra-package-dbs: []

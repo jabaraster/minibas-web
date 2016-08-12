@@ -64,3 +64,4 @@ $newline never
       <a href=@{GameIndexUiR} #game-index-ui-href>
       <a href=@{NewGameUiR} #new-game-href>
       <a href=@{EmptyGameR} #empty-game-href>
+      <a href=@{LeagueIndexR} #league-index-href>

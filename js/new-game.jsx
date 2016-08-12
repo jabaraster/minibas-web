@@ -9,6 +9,7 @@ import reducer         from './reducers/new-game'
 import Ajaxer          from './lib/ajaxer'
 import Lib             from './lib/lib'
 import * as actions    from './actions/new-game'
+import * as LeagueActs from './actions/league';
 import RootComponent   from './containers/NewGame'
 
 $(() => {
@@ -26,6 +27,9 @@ Ajaxer.get(Lib.href('empty-game-href')).end((err, res) => {
         </Provider>,
         document.getElementById('content')
     )
+
+    store.dispatch(LeagueActs.startFetchLeagueList())
+
     Lib.hideInitialLoadingIcon()
     Lib.setUpWindowUnloadAlert()
 })

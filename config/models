@@ -7,12 +7,18 @@ User
     resetPasswordKey Text
     UniqueUser name
     deriving Show Read Eq
+League json
+    name Text
+    UniqueLeague name
+    deriving Show Read Eq
 Game json
+    league LeagueId
     name Text
     place Text
     teamAName Text
     teamBName Text
     date UTCTime
+    UniqueGame name league
     deriving Show Read Eq
 Score json
     gameId GameId

@@ -11,6 +11,7 @@ import qualified Data.Aeson.Lens as AL (key, _Bool, _Integer)
 import qualified Data.List as L (sortBy, foldl)
 import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
 import           Jabara.Yesod.Util (getResourcePath)
+import           ModelDef (Quarter(..))
 
 getGameIndexR :: Handler [WVOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
@@ -147,7 +148,8 @@ getEmptyGameR = do
                        }
       , _wvoGameGame = VOGame {
           _voGameProperty = Entity dummyKey $ Game {
-                                _gameName = ""
+                                _gameLeague = dummyKey
+                              , _gameName = ""
                               , _gamePlace = ""
                               , _gameTeamAName = ""
                               , _gameTeamBName = ""

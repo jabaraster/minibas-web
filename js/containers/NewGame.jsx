@@ -1,28 +1,14 @@
 import React         from 'react'
 import { connect }   from 'react-redux'
-import { ButtonToolbar } from 'react-bootstrap/'
-import Button        from 'react-bootstrap/lib/Button'
-import Glyphicon     from 'react-bootstrap/lib/Glyphicon'
-import FormGroup     from 'react-bootstrap/lib/FormGroup'
-import FormControl   from 'react-bootstrap/lib/FormControl'
-import ControlLabel  from 'react-bootstrap/lib/ControlLabel'
 import Ajaxer        from '../lib/ajaxer'
 import Lib           from '../lib/lib'
 import * as actions  from '../actions/new-game'
 
+import { ButtonToolbar, Button, Glyphicon,
+         FormGroup, InputGroup, FormControl,
+         ControlLabel, DropdownButton, MenuItem } from 'react-bootstrap/'
+
 const NewGame = ({game, score, dispatch}) => {
-    const onPlaceChange = (e) => {
-        dispatch(actions.changeGamePlace(e.target.value))
-    }
-    const onNameChange = (e) => {
-        dispatch(actions.changeGameName(e.target.value))
-    }
-    const onTeamANameChange = (e) => {
-        dispatch(actions.changeTeamAName(e.target.value))
-    }
-    const onTeamBNameChange = (e) => {
-        dispatch(actions.changeTeamBName(e.target.value))
-    }
     const now = () => {
         const ret = new Date()
         return [ret.getFullYear(), ret.getMonth()+1, ret.getDate()].join('/')
@@ -72,12 +58,27 @@ const NewGame = ({game, score, dispatch}) => {
 
           <div>
             <FormGroup>
+              <ControlLabel>リーグを選択するか、入力して下さい</ControlLabel>
+              <InputGroup>
+                <FormControl
+                   type="text"
+                   value={game.name}
+                   placeholder='(省略化)'
+                   onChange={e => actions.changeGameName(e.target.value)}
+                />
+                <DropdownButton pullRight componentClass={InputGroup.Button}>
+                  <MenuItem>aaa</MenuItem>
+                  <MenuItem>bbb</MenuItem>
+                </DropdownButton>
+              </InputGroup>
+            </FormGroup>
+            <FormGroup>
               <ControlLabel>試合名を入力して下さい</ControlLabel>
               <FormControl
                  type="text"
                  value={game.name}
                  placeholder='(省略化)'
-                 onChange={e => onNameChange(e)}
+                 onChange={e => actions.changeGameName(e.target.value)}
               />
             </FormGroup>
             <FormGroup>
@@ -86,7 +87,7 @@ const NewGame = ({game, score, dispatch}) => {
                  type="text"
                  value={game.place}
                  placeholder='(省略化)'
-                 onChange={e => onPlaceChange(e)}
+                 onChange={e => actions.changeGamePlace(e.target.value)}
               />
             </FormGroup>
             <FormGroup>
@@ -95,7 +96,7 @@ const NewGame = ({game, score, dispatch}) => {
                  type="text"
                  value={game.teamAName}
                  placeholder='(省略化)'
-                 onChange={e => onTeamANameChange(e)}
+                 onChange={e => actions.changeTeamAName(e.target.value)}
               />
             </FormGroup>
             <FormGroup>
@@ -104,7 +105,7 @@ const NewGame = ({game, score, dispatch}) => {
                  type="text"
                  value={game.teamBName}
                  placeholder='(省略化)'
-                 onChange={e => onTeamBNameChange(e)}
+                 onChange={e => actions.changeTeamBName(e.target.value)}
               />
             </FormGroup>
           </div>
