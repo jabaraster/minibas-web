@@ -54,6 +54,8 @@ data AppSettings = AppSettings
     -- ^ Copyright text to appear in the footer of the page
     , appAnalytics              :: Maybe Text
     -- ^ Google Analytics code
+    , appMode                   :: String
+    -- ^ 実行ファイルへの引数によるDEVELOPMENTなどのモード.
     }
 
 instance FromJSON AppSettings where
@@ -64,6 +66,7 @@ instance FromJSON AppSettings where
 #else
                 False
 #endif
+            appMode = if defaultDev then "development" else "production"
         appStaticDir              <- o .: "static-dir"
         appDatabaseConf           <- o .: "database"
         appRoot                   <- o .:? "approot"

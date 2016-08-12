@@ -1,25 +1,25 @@
 
-export function initializeNewGame(game) {
-    return { type: 'INITIALIZE_NEW_GAME', game }
+export const INITIALIZE_NEW_GAME = 'new-game_INITIALIZE_NEW_GAME'
+export const initializeNewGame = game => {
+    return { type: INITIALIZE_NEW_GAME, game }
 }
 
-export function changeGameName(value) {
-    return { type: 'CHANGE_GAME_NAME', value }
+export const CHANGE_LEAGUE = 'new-game_CHANGE_LEAGUE'
+export const changeGameName = value => {
+    return { type: CHANGE_GAME_NAME, value }
 }
 
-export function changeGamePlace(value) {
-    return { type: 'CHANGE_GAME_PLACE', value }
+export const CHANGE_GAME_PLACE = 'new-game_CHANGE_GAME_PLACE'
+export const changeGamePlace = value => {
+    return { type: CHANGE_GAME_PLACE, value }
 }
 
-export function changeTeamAName(value) {
-    return { type: 'CHANGE_TEMA_A_NAME', value }
+export const CHANGE_TEAM_A_NAME = 'new-game_CHANGE_TEAM_A_NAME'
+export const changeTeamAName = value => {
+    return { type: CHANGE_TEMA_A_NAME, value }
 }
 
-export function changeTeamBName(value) {
-    return { type: 'CHANGE_TEMA_B_NAME', value }
+export const CHANGE_TEAM_B_NAME = 'new-game_CHANGE_TEAM_B_NAME'
+export const changeTeamBName = value => {
+    return { type: CHANGE_TEMA_B_NAME, value }
 }
-
-export function changeWizardPane(paneIndex) {
-    return { type: 'CHANGE_WIZARD_PANE', paneIndex }
-}
-

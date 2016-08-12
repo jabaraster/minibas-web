@@ -1,33 +1,29 @@
-import lib from '../lib/lib'
+import Lib              from '../lib/lib'
+import * as NewGameActs from '../actions/new-game'
 
 function newGame(state, action) {
     switch (action.type) {
-        case 'INITIALIZE_NEW_GAME': {
+        case NewGameActs.INITIALIZE_NEW_GAME: {
             return JSON.parse(JSON.stringify(action.game))
         }
-        case 'CHANGE_GAME_NAME': {
-            const ret = Object.assign({}, state)
-            ret.game = Object.assign({}, state.game, {name: action.value})
+        case NewGameActs.CHANGE_GAME_NAME: {
+            const ret = Lib.assign({}, state)
+            ret.game = Lib.assign({}, state.game, {name: action.value})
             return ret
         }
-        case 'CHANGE_GAME_PLACE': {
-            const ret = Object.assign({}, state)
-            ret.game = Object.assign({}, state.game, {place: action.value})
+        case NewGameActs.CHANGE_GAME_PLACE: {
+            const ret = Lib.assign({}, state)
+            ret.game = Lib.assign({}, state.game, {place: action.value})
             return ret
         }
-        case 'CHANGE_TEMA_A_NAME': {
-            const ret = Object.assign({}, state)
-            ret.game = Object.assign({}, state.game, {teamAName: action.value})
+        case NewGameActs.CHANGE_TEMA_A_NAME: {
+            const ret = Lib.assign({}, state)
+            ret.game = Lib.assign({}, state.game, {teamAName: action.value})
             return ret
         }
-        case 'CHANGE_TEMA_B_NAME': {
-            const ret = Object.assign({}, state)
-            ret.game = Object.assign({}, state.game, {teamBName: action.value})
-            return ret
-        }
-        case 'CHANGE_WIZARD_PANE': {
-            const ret = Object.assign({}, state)
-            ret.wizardState = Object.assign({}, state.wizardState, {activeKey: action.paneIndex})
+        case NewGameActs.CHANGE_TEMA_B_NAME: {
+            const ret = Lib.assign({}, state)
+            ret.game = Lib.assign({}, state.game, {teamBName: action.value})
             return ret
         }
         default:
