@@ -18,16 +18,19 @@ library
                      Import
                      Import.NoFoundation
                      Model
+                     ModelDef
                      Settings
                      Settings.StaticFiles
                      Handler.Common
                      Handler.Sandbox
                      Handler.GameJson
                      Handler.GameUi
-                     ModelDef
-                     Minibas.Types
-                     Minibas.Web
+                     Handler.League
+                     Handler.Team
                      Minibas.Css
+                     Minibas.Types
+                     Minibas.Util
+                     Minibas.Web
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -113,6 +116,8 @@ test-suite test
     main-is:           Spec.hs
     other-modules:     Handler.CommonSpec
                        Handler.GameJson
+                       Handler.League
+                       Handler.Team
                        TestImport
     hs-source-dirs:    test
     ghc-options:       -Wall

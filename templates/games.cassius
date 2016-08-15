@@ -20,3 +20,15 @@ table.table
 
   .btn-danger
     margin-left: 10px
+
+  .score
+    display: inline-block
+    text-align: center
+    padding: 4px
+
+    .team-name, .team-score
+      display: block
+
+  .delimeter
+    display: inline
+    font-size: large

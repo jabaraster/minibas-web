@@ -1,35 +1,44 @@
-import React           from 'react'
-import { createStore } from 'redux'
-import { Provider }    from 'react-redux'
-import { render }      from 'react-dom'
-import newGame             from './reducers/new-game'
-import Ajaxer          from './lib/ajaxer'
-import Lib             from './lib/lib'
-import * as actions    from './actions/new-game'
-import swal            from 'sweetalert'
-import RootComponent   from './containers/NewGame'
-import { combineReducers } from 'redux'
+import React            from 'react'
+import { createStore }  from 'redux'
+import { Provider }     from 'react-redux'
+import { render }       from 'react-dom'
 
-const store = createStore(newGame)
+import Store            from './lib/store'
+import reducer          from './reducers/new-game'
+
+import Ajaxer           from './lib/ajaxer'
+import Lib              from './lib/lib'
+import * as NewGameActs from './actions/new-game'
+import * as LeagueActs  from './actions/league';
+import * as TeamActs    from './actions/team';
+import RootComponent    from './containers/NewGame'
 
 $(() => {
-    Ajaxer.get(Lib.href('empty-game-href')).end((err, res) => {
-        if (Ajaxer.evalError(err)) return
-        const state = res.body
-        state.wizardState = {
-          activeKey: 0,
-          panes: [
-            { label: '試合名と場所' },
-            { label: 'チーム名'     },
-          ]}
-        store.dispatch(actions.initializeNewGame(state))
-        render(
-            <Provider store={store}>
-              <RootComponent />
-            </Provider>,
-            document.getElementById('content')
-        )
-        Lib.hideInitialLoadingIcon()
-        Lib.setUpWindowUnloadAlert()
-    })
+
+const initialState = {
+    game: {
+        leagueName: '',
+        gameName: '',
+        gamePlace: '',
+        teamAName: '',
+        teamBName: '',
+    },
+    leagueList: [],
+    teamList: [],
+}
+const store = Store.createStore(reducer, initialState)
+
+render(
+    <Provider store={store}>
+      <RootComponent />
+    </Provider>,
+    document.getElementById('content')
+)
+
+store.dispatch(LeagueActs.startFetchLeagueList())
+store.dispatch(TeamActs.startFetchTeamList())
+
+Lib.hideInitialLoadingIcon()
+Lib.setUpWindowUnloadAlert()
+
 })

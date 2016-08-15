@@ -5,43 +5,50 @@ import Button        from 'react-bootstrap/lib/Button'
 import Glyphicon     from 'react-bootstrap/lib/Glyphicon'
 import Ajaxer        from '../lib/ajaxer'
 import Lib           from '../lib/lib'
+import Ui            from '../lib/ui'
 import swal          from 'sweetalert'
 import * as actions  from '../actions/games'
 
-const Games = ({data, dispatch}) => {
+const Games = ({gameList, dispatch}) => {
     const editGame = (editUrl) => {
         location.href = editUrl
     }
-    const deleteGame = (gameId) => {
-        Lib.doubleConfirm('削除しますか？',
+    const deleteGame = (game) => {
+        Ui.doubleConfirm('削除しますか？',
             '本当に削除しますか？削除すると元に戻せません！',
             () => {
-                Ajaxer.del('/games/' + gameId).end((err, res) => {
+                Ajaxer.del(game.urlBase).end((err, res) => {
                     if (Ajaxer.evalError(err)) return
-                    swal({
-                        title: '削除しました！',
-                        text: '',
-                        type: 'success',
-                        showConfirmButton: false,
-                        timer: 1000,
-                    })
-                    dispatch(actions.deleteGame(gameId))
+                    Ui.success('削除しました')
+                    dispatch(actions.deleteGame(game.id))
                 })
         })
     }
-    const tagGame = ({game, urls}, idx) => {
+    const tagGame = (game, idx) => {
         return (
             <tr key={'game_'+idx}>
               <td className="game-name">
-                <a className="game-name" href={urls.gameEdit}>
-                  {game.property.name}
+                <a className="game-name" href={game.urlEdit}>
+                  {game.name}
                 </a>
               </td>
+              <td>{game.leagueName}</td>
               <td>
-                <Button bsStyle="primary" onClick={() => { editGame(urls.gameEdit) }}>
+                <div className="score team-a">
+                  <span className="team-name">{game.teamAName}</span>
+                  <span className="team-score">{game.teamAScore}</span>
+                </div>
+                <span className="delimeter">-</span>
+                <div className="score team-b">
+                  <span className="team-name">{game.teamBName}</span>
+                  <span className="team-score">{game.teamBScore}</span>
+                </div>
+              </td>
+              <td>
+                <Button bsStyle="primary" onClick={() => { editGame(game.urlEdit) }}>
                   <Glyphicon glyph="pencil" />
                 </Button>
-                <Button bsStyle="danger" onClick={() => { deleteGame(game.property.id) }}>
+                <Button bsStyle="danger" onClick={() => { deleteGame(game) }}>
                   <Glyphicon glyph="trash" />
                 </Button>
               </td>
@@ -58,7 +65,7 @@ const Games = ({data, dispatch}) => {
           <table className="table">
             <thead></thead>
             <tbody>
-              {data.map(tagGame)}
+              {gameList.map(tagGame)}
             </tbody>
           </table>
         </div>

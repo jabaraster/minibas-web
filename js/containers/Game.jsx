@@ -11,10 +11,11 @@ import classnames     from 'classnames';
 import Clearfix       from 'react-bootstrap/lib/Clearfix'
 import * as actions   from '../actions/game'
 import Lib            from '../lib/lib'
+import App            from '../lib/app'
 import Ajaxer         from '../lib/ajaxer'
 
 const QuarterScore = connect(Lib.returnProps)
-  (({data,quarterIndex,url,connector,dispatch}) => {
+  (({score,quarterIndex,connector,dispatch}) => {
     const selectAll = e => {
         e.target.select()
     }
@@ -22,8 +23,8 @@ const QuarterScore = connect(Lib.returnProps)
         dispatch(actions.changeTeamPoint(quarterIndex, teamAorB, value - 0))
     }
     const onLockChange = () => {
-        Ajaxer.patch(url)
-            .send({lock: !data.lock})
+        Ajaxer.patch(score.urlBase)
+            .send({lock: !score.lock})
             .end((err, res) => {
                 if (err) {
                     swal({
@@ -33,39 +34,39 @@ const QuarterScore = connect(Lib.returnProps)
                     })
                     return
                 }
-                dispatch(actions.changeLock(quarterIndex, !data.lock))
+                dispatch(actions.changeLock(quarterIndex, !score.lock))
             })
     }
     return (
         <div className="quarter-score">
-          {data.lock ?
-           <span className="form-control">{data.teamAPoint}</span>
+          {score.lock ?
+           <span className="form-control">{score.teamAPoint}</span>
            :
            <FormControl type="number"
              min={0}
-             value={data.teamAPoint}
+             value={score.teamAPoint}
              onFocus={selectAll}
              onChange={e => { onPointChange('A', e.target.value) }}
            />}
           <span className="connector">{connector}</span>
-          {data.lock ?
-           <span className="form-control">{data.teamBPoint}</span>
+          {score.lock ?
+           <span className="form-control">{score.teamBPoint}</span>
            :
            <FormControl type="number"
              min={0}
-             value={data.teamBPoint}
+             value={score.teamBPoint}
              onFocus={selectAll}
              onChange={e => { onPointChange('B', e.target.value) }}
            />}
           <a className="lock-control" href="#" onClick={onLockChange}>
-            <Glyphicon glyph={data.lock ? 'pencil' : 'lock'} />
+            <Glyphicon glyph={score.lock ? 'pencil' : 'lock'} />
           </a>
         </div>
     )
 })
 
 const EditDialog = connect(Lib.returnProps)
-  (({property,score,url,uiState,dispatch}) => {
+  (({game,uiState,dispatch}) => {
     const save = () => {
         swal({
             title: '保存中...',
@@ -74,8 +75,7 @@ const EditDialog = connect(Lib.returnProps)
             showCancelButton: false,
             showConfirmButton: false,
         })
-        const game = {property,score}
-        Ajaxer.post(url)
+        Ajaxer.post(game.urlBase)
             .send(game)
             .end((err,res) => {
             if (Ajaxer.evalError(err)) return
@@ -89,8 +89,8 @@ const EditDialog = connect(Lib.returnProps)
         dispatch(actions.uiChangeEditDialogOpen(false))
     }
     const setValue = (propName, value) => {
-        property[propName] = value
-        dispatch(actions.changeGameProperty(property))
+        game[propName] = value
+        dispatch(actions.changeGameProperty(game))
     }
     return (
        <Modal show={uiState.editDialogOpen}>
@@ -98,28 +98,28 @@ const EditDialog = connect(Lib.returnProps)
            <FormGroup>
              <ControlLabel>試合の名前</ControlLabel>
              <FormControl type="text"
-                 value={property.name}
+                 value={game.name}
                  onChange={e => { setValue('name', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>試合の場所</ControlLabel>
              <FormControl type="text"
-                 value={property.place}
+                 value={game.place}
                  onChange={e => { setValue('place', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>チームAの名前</ControlLabel>
              <FormControl type="text"
-                 value={property.teamAName}
+                 value={game.teamAName}
                  onChange={e => { setValue('teamAName', e.target.value) }}
              />
            </FormGroup>
            <FormGroup>
              <ControlLabel>チームBの名前</ControlLabel>
              <FormControl type="text"
-                 value={property.teamBName}
+                 value={game.teamBName}
                  onChange={e => { setValue('teamBName', e.target.value) }}
              />
            </FormGroup>
@@ -132,7 +132,7 @@ const EditDialog = connect(Lib.returnProps)
     )
 })
 
-const Game = ({game,urls,uiState,dispatch}) => {
+const Game = ({game,uiState,dispatch}) => {
     const onMenuClick = () => {
         dispatch(actions.uiChangeMenuOpen(!uiState.menuOpen))
     }
@@ -144,7 +144,7 @@ const Game = ({game,urls,uiState,dispatch}) => {
             showCancelButton: false,
             showConfirmButton: false,
         })
-        Ajaxer.post(urls.game)
+        Ajaxer.post(game.urlBase)
             .send(game)
             .end((err,res) => {
             if (Ajaxer.evalError(err)) return
@@ -163,20 +163,21 @@ const Game = ({game,urls,uiState,dispatch}) => {
                         'main-content': true,
                         'main-content-menu-open': uiState.menuOpen,
                          })
+    const total = App.total(game.scoreList)
     return (
         <Clearfix>
-          <EditDialog property={game.property} score={game.score} url={urls.game} uiState={uiState} />
+          <EditDialog game={game} uiState={uiState} />
           <div className={menuClass}>
             <Button bsSize="large" onClick={onMenuClick}>
               <Glyphicon glyph="remove" />
             </Button>
             <a href="#" onClick={onEditClick}>
               <Glyphicon glyph="pencil" />
-              編集
+              ゲーム情報の編集
             </a>
             <a href={Lib.href('game-index-ui-href')}>
               <Glyphicon glyph="home" />
-              ホーム
+              ホームに戻る
             </a>
           </div>
           <div className={contentClass}>
@@ -188,20 +189,29 @@ const Game = ({game,urls,uiState,dispatch}) => {
                 <Glyphicon glyph="cloud-upload" />
               </Button>
             </ButtonToolbar>
+            <h1>{game.leagueName}</h1>
             <h1>{game.name}</h1>
             <div className="score">
               <div className="team team-a">
-                {game.property.teamAName}
+                {game.teamAName}
               </div>
               <div className="quarter-scores">
-                <QuarterScore data={game.score[0]} url={urls.quarter[0]} quarterIndex={0} connector="-" />
-                <QuarterScore data={game.score[1]} url={urls.quarter[1]} quarterIndex={1} connector="-" />
-                <QuarterScore data={game.score[2]} url={urls.quarter[2]} quarterIndex={2} connector="-" />
-                <QuarterScore data={game.score[3]} url={urls.quarter[3]} quarterIndex={3} connector="-" />
-                <QuarterScore data={game.score[4]} url={urls.quarter[4]} quarterIndex={4} connector="延長" />
+                <QuarterScore score={game.scoreList[0]} quarterIndex={0} connector="-" />
+                <QuarterScore score={game.scoreList[1]} quarterIndex={1} connector="-" />
+                <QuarterScore score={game.scoreList[2]} quarterIndex={2} connector="-" />
+                <QuarterScore score={game.scoreList[3]} quarterIndex={3} connector="-" />
+                <QuarterScore score={game.scoreList[4]} quarterIndex={4} connector="延長" />
+                <div className="quarter-score total">
+                  <span className="total-point team-a form-control">{total.teamAPoint}</span>
+                  <span className="connector">計</span>
+                  <span className="total-point team-b form-control">{total.teamBPoint}</span>
+                  <a className="lock-control">
+                    <Glyphicon glyph="ok"/>
+                  </a>
+                </div>
               </div>
               <div className="team team-b">
-                {game.property.teamBName}
+                {game.teamBName}
               </div>
             </div>
           </div>

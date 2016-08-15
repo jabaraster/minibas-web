@@ -7,14 +7,17 @@
 /sandbox SandboxR GET
 
 / GameIndexUiR GET
+
 /games/new/ui NewGameUiR GET
 /games/!#GameId/ui GameUiR GET
 
 /games/index GameIndexR GET PUT
-/games/empty EmptyGameR GET
 /games/!#GameId GameR GET POST DELETE
 /games/!#GameId/score/first  GameScoreFirstR  PATCH
 /games/!#GameId/score/second GameScoreSecondR PATCH
 /games/!#GameId/score/third  GameScoreThirdR  PATCH
 /games/!#GameId/score/fourth GameScoreFourthR PATCH
 /games/!#GameId/score/extra  GameScoreExtraR  PATCH
+
+/league/index LeagueIndexR GET
+/team/index TeamIndexR GET

@@ -1,5 +1,5 @@
-export function initializeGames(data) {
-    return { type: 'INITIALIZE_GAMES', data }
+export function initializeGames(gameList) {
+    return { type: 'INITIALIZE_GAMES', gameList }
 }
 
 export function deleteGame(gameId) {
