@@ -9,4 +9,4 @@ stanzas:
       - minibas.jabara.info
     requires-secure: false
 plugins:
-  postgres: true
+  postgres: false
