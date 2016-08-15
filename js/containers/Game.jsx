@@ -15,8 +15,6 @@ import Ajaxer         from '../lib/ajaxer'
 
 const QuarterScore = connect(Lib.returnProps)
   (({data,quarterIndex,url,connector,dispatch}) => {
-    console.log(data)
-
     const selectAll = e => {
         e.target.select()
     }
@@ -174,11 +172,11 @@ const Game = ({game,urls,uiState,dispatch}) => {
             </Button>
             <a href="#" onClick={onEditClick}>
               <Glyphicon glyph="pencil" />
-              編集
+              ゲーム情報の編集
             </a>
             <a href={Lib.href('game-index-ui-href')}>
               <Glyphicon glyph="home" />
-              ホーム
+              ホームに戻る
             </a>
           </div>
           <div className={contentClass}>

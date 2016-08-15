@@ -7,45 +7,26 @@ module Handler.GameJson where
 
 import Import
 
-import           Control.Lens
+import           Control.Lens (makeLenses, (^.), (^?), (.~), (&))
 import qualified Data.Aeson.Lens as AL (key, _Bool, _Integer)
 import           Data.Aeson.TH (deriveJSON, defaultOptions, fieldLabelModifier)
 import qualified Data.List as L (sortBy, foldl)
-import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
-import           Jabara.Util (omittedFirstCharLower)
+import           Jabara.Persist.Util (dummyKey, toKey, toRecord, toMap)
+import           Jabara.Util (omittedFirstCharLower, listToListMap)
 import           Jabara.Yesod.Util (getResourcePath)
+import           Minibas.Util (buildGameData, quarterUrls)
 import           ModelDef (Quarter(..), mapQuarters, mapQuartersM)
 
-getGameIndexR :: Handler [WVOGame]
-getGameIndexR = runDB $ selectList [] [Asc GameDate]
-  >>= mapM entityToVo
-
-quarterUrls :: (MonadHandler m, HandlerSite m ~ App) => GameId -> m [Text]
-quarterUrls gameId = do
-    firstUrl  <- getResourcePath $ GameScoreFirstR gameId
-    secondUrl <- getResourcePath $ GameScoreSecondR gameId
-    thirdUrl  <- getResourcePath $ GameScoreThirdR gameId
-    fourthUrl <- getResourcePath $ GameScoreFourthR gameId
-    extraUrl  <- getResourcePath $ GameScoreExtraR gameId
-    pure [firstUrl, secondUrl, thirdUrl, fourthUrl, extraUrl]
-
-
-entityToVo :: (MonadHandler m, HandlerSite m ~ App) => Entity Game -> m WVOGame
-entityToVo game@(Entity key _) = do
-    editPath <- getResourcePath $ GameUiR key
-    path     <- getResourcePath $ GameR key
-    urls     <- quarterUrls key
-    pure WVOGame {
-        _wvoGameGame = VOGame {
-            _voGameProperty = game
-          , _voGameScore = []
-        }
-      , _wvoGameUrls = GameUrls {
-            _gameUrlsGame = path
-          , _gameUrlsGameEdit = editPath
-          , _gameUrlsQuarter = urls
-        }
-    }
+getGameIndexR :: Handler [GameData]
+getGameIndexR = runDB $ do
+    games::[Entity Game]     <- selectList [] [Asc GameDate]
+    leagues::[Entity League] <- selectList [LeagueId <-. map (_gameLeague.toRecord) games] []
+    scores::[Entity Score]   <- selectList [ScoreGame <-. map toKey games] []
+    teams::[Entity Team]     <- selectList [TeamId <-. (map (_gameTeamA.toRecord) games)++(map (_gameTeamB.toRecord) games)] []
+    leagueMap        <- pure $ toMap leagues
+    teamMap          <- pure $ toMap teams
+    scoreMap         <- pure $ listToListMap (_scoreGame.toRecord) scores
+    mapM (buildGameData leagueMap teamMap scoreMap) games
 
 data Put = Put {
     _putLeagueName :: Text
@@ -120,6 +101,7 @@ getGameR gameId = do
     core :: MonadIO m => ReaderT SqlBackend m VOGame
     core = do
         game <- get404 gameId
+        league   <- get404 $ game^.gameLeague
         scores   <- selectList [ScoreGame ==. gameId] []
                     >>= pure . L.sortBy (
                             \r l -> let r' = (toRecord r)^.scoreQuarter
@@ -128,6 +110,7 @@ getGameR gameId = do
                         )
         pure $ VOGame {
                    _voGameProperty = Entity gameId game
+                 , _voGameLeagueName = league^.leagueName
                  , _voGameScore = scores
                }
 
@@ -203,6 +186,7 @@ getEmptyGameR = do
                               , _gameTeamB = dummyKey
                               , _gameDate = now
                             }
+        , _voGameLeagueName = ""
         , _voGameScore = mapQuarters $ (\q -> Entity dummyKey $ emptyScore dummyKey q)
       }
   }

@@ -29,6 +29,7 @@ library
                      Handler.Team
                      Minibas.Css
                      Minibas.Types
+                     Minibas.Util
                      Minibas.Web
 
     if flag(dev) || flag(library-only)

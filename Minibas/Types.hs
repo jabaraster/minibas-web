@@ -13,6 +13,7 @@ import Model (Score, Game)
 
 data VOGame = VOGame {
     _voGameProperty :: Entity Game
+  , _voGameLeagueName :: Text
   , _voGameScore    :: [Entity Score]
 } deriving (Show, Eq, Read, Generic)
 makeLenses ''VOGame
