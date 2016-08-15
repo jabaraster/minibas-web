@@ -13,14 +13,14 @@ const Games = ({gameList, dispatch}) => {
     const editGame = (editUrl) => {
         location.href = editUrl
     }
-    const deleteGame = (gameId) => {
+    const deleteGame = (game) => {
         Ui.doubleConfirm('削除しますか？',
             '本当に削除しますか？削除すると元に戻せません！',
             () => {
-                Ajaxer.del('/games/' + gameId).end((err, res) => {
+                Ajaxer.del(game.urlBase).end((err, res) => {
                     if (Ajaxer.evalError(err)) return
                     Ui.success('削除しました')
-                    dispatch(actions.deleteGame(gameId))
+                    dispatch(actions.deleteGame(game.id))
                 })
         })
     }
@@ -48,7 +48,7 @@ const Games = ({gameList, dispatch}) => {
                 <Button bsStyle="primary" onClick={() => { editGame(game.urlEdit) }}>
                   <Glyphicon glyph="pencil" />
                 </Button>
-                <Button bsStyle="danger" onClick={() => { deleteGame(game.property.id) }}>
+                <Button bsStyle="danger" onClick={() => { deleteGame(game) }}>
                   <Glyphicon glyph="trash" />
                 </Button>
               </td>

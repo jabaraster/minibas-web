@@ -11,17 +11,18 @@ import RootComponent   from './containers/Game'
 
 $(() => {
 
-const store = Store.createStore(reducer, {})
-
-Ajaxer.get(Lib.href('game-href')).end((err, res) => {
-    if (Ajaxer.evalError(err)) return
-            console.log(res)
-    const state = res.body
-    state.uiState = {
+const initialState = {
+    game: {},
+    uiState: {
         menuOpen: false,
         editDialogOpen: false,
     }
-    store.dispatch(actions.initialzeGame(state))
+}
+const store = Store.createStore(reducer, initialState)
+
+Ajaxer.get(Lib.href('game-href')).end((err, res) => {
+    if (Ajaxer.evalError(err)) return
+    store.dispatch(actions.initialzeGame(res.body))
     render(
         <Provider store={store}>
           <RootComponent />

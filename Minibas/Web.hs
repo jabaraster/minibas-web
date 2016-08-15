@@ -5,7 +5,7 @@ module Minibas.Web (
     WVOGame(..), wvoGameGame, wvoGameUrls
   , GameUrls(..), gameUrlsGame, gameUrlsGameEdit, gameUrlsQuarter
   , ScoreData(..), scoreDataId, scoreDataGame, scoreDataQuarter, scoreDataTeamAPoint, scoreDataTeamBPoint, scoreDataLock, scoreDataUrlBase
-  , GameData(..), gameDataId, gameDataName, gameDataLeague, gameDataLeagueName, gameDataTeamA, gameDataTeamAName, gameDataTeamB, gameDataTeamBName, gameDataTeamAScore, gameDataTeamBScore, gameDataUrlBase, gameDataUrlEdit, gameDataScoreList
+  , GameData(..), gameDataId, gameDataName, gameDataPlace, gameDataLeague, gameDataLeagueName, gameDataTeamA, gameDataTeamAName, gameDataTeamB, gameDataTeamBName, gameDataTeamAScore, gameDataTeamBScore, gameDataUrlBase, gameDataUrlEdit, gameDataScoreList, gameDataDate
 ) where
 
 import Minibas.Types (VOGame)
@@ -15,6 +15,7 @@ import ModelDef (Quarter)
 import ClassyPrelude.Yesod
 import Control.Lens (makeLenses)
 import Data.Aeson.TH (deriveJSON, defaultOptions, fieldLabelModifier)
+import Data.Time.LocalTime (ZonedTime)
 import Jabara.Util (omittedFirstCharLower)
 import Jabara.Yesod.Util (tc, ttc)
 
@@ -45,6 +46,7 @@ $(deriveJSON defaultOptions {
 data GameData = GameData {
     _gameDataId :: GameId
   , _gameDataName :: Text
+  , _gameDataPlace :: Text
   , _gameDataLeague :: Entity League
   , _gameDataLeagueName :: Text
   , _gameDataTeamA :: Entity Team
@@ -55,12 +57,15 @@ data GameData = GameData {
   , _gameDataTeamBScore :: Int
   , _gameDataUrlBase :: Text
   , _gameDataUrlEdit :: Text
+  , _gameDataDate :: ZonedTime
   , _gameDataScoreList :: [ScoreData]
-} deriving (Show, Eq, Read, Generic)
+} deriving (Show, Read, Generic)
 makeLenses ''GameData
 $(deriveJSON defaultOptions {
     fieldLabelModifier = omittedFirstCharLower "_gameData"
 } ''GameData)
+instance ToContent GameData where toContent = tc
+instance ToTypedContent GameData where toTypedContent = ttc
 instance ToContent [GameData] where toContent = tc
 instance ToTypedContent [GameData] where toTypedContent = ttc
 

@@ -6,8 +6,8 @@ body
     background: #{cssBackColor}
 
 #content
-    margin-top: 10px;
-
+    margin-top: 10px
+    margin-bottom: 25px
 
 /* Ripple Effect */
 /* 出展 */

@@ -3,6 +3,7 @@ module Minibas.Util (
   , quarterUrls
   , buildScoreData
   , buildGameData
+  , buildGameData'
 ) where
 
 import Import
@@ -11,7 +12,9 @@ import           Control.Lens ((^.))
 import qualified Data.List as L (foldl, sortOn, (!!))
 import qualified Data.Map as M (Map, lookup)
 import           Data.Maybe (fromJust)
-import           Jabara.Persist.Util (toRecord)
+import           Data.Time.LocalTime (utcToLocalZonedTime)
+import           Jabara.Persist.Util (toMap, toRecord)
+import           Jabara.Util (listToListMap)
 import           Jabara.Yesod.Util (getResourcePath)
 
 totalScore :: [Entity Score] -> (Int, Int)
@@ -48,12 +51,24 @@ buildScoreData gameId (Entity key score) = do
            }
 
 buildGameData :: (MonadHandler m, HandlerSite m ~ App) =>
+                   [Entity League]
+                   -> [Entity Team]
+                   -> [Entity Score]
+                   -> Entity Game
+                   -> m GameData
+buildGameData leagues teams scores game = buildGameData'
+                   (toMap leagues)
+                   (toMap teams)
+                   (listToListMap (_scoreGame.toRecord) scores)
+                   game
+
+buildGameData' :: (MonadHandler m, HandlerSite m ~ App) =>
                    M.Map LeagueId League
                    -> M.Map TeamId Team
                    -> M.Map GameId [Entity Score]
                    -> Entity Game
                    -> m GameData
-buildGameData leagueMap teamMap scoreMap (Entity gameId game) = do
+buildGameData' leagueMap teamMap scoreMap (Entity gameId game) = do
       urlBase <- getResourcePath $ GameR gameId
       urlEdit <- getResourcePath $ GameUiR gameId
       let scores  = L.sortOn (_scoreQuarter.toRecord)
@@ -63,9 +78,11 @@ buildGameData leagueMap teamMap scoreMap (Entity gameId game) = do
           teamA   = getFromMap (game^.gameTeamA) teamMap
           teamB   = getFromMap (game^.gameTeamB) teamMap
       scores' <- mapM (buildScoreData gameId) scores
+      date    <- liftIO $ utcToLocalZonedTime $ game^.gameDate
       pure $ GameData {
                _gameDataId = gameId
              , _gameDataName = game^.gameName
+             , _gameDataPlace = game^.gamePlace
              , _gameDataLeague = league
              , _gameDataLeagueName = (toRecord league)^.leagueName
              , _gameDataTeamA = teamA
@@ -76,6 +93,7 @@ buildGameData leagueMap teamMap scoreMap (Entity gameId game) = do
              , _gameDataTeamBScore = snd total
              , _gameDataUrlBase = urlBase
              , _gameDataUrlEdit = urlEdit
+             , _gameDataDate = date
              , _gameDataScoreList = scores'
              }
   where

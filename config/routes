@@ -12,7 +12,6 @@
 /games/!#GameId/ui GameUiR GET
 
 /games/index GameIndexR GET PUT
-/games/empty EmptyGameR GET
 /games/!#GameId GameR GET POST DELETE
 /games/!#GameId/score/first  GameScoreFirstR  PATCH
 /games/!#GameId/score/second GameScoreSecondR PATCH
