@@ -15,6 +15,8 @@ import Ajaxer         from '../lib/ajaxer'
 
 const QuarterScore = connect(Lib.returnProps)
   (({data,quarterIndex,url,connector,dispatch}) => {
+    console.log(data)
+
     const selectAll = e => {
         e.target.select()
     }

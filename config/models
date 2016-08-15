@@ -25,11 +25,11 @@ Game json
     UniqueGame name league
     deriving Show Read Eq
 Score json
-    gameId GameId
+    game GameId
     quarter Quarter
     teamAPoint Int
     teamBPoint Int
     lock Bool
-    UniqueScore gameId quarter
+    UniqueScore game quarter
     deriving Show Read Eq
 

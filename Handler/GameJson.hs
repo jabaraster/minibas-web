@@ -14,7 +14,7 @@ import qualified Data.List as L (sortBy, foldl)
 import           Jabara.Persist.Util (dummyKey, toKey, toRecord)
 import           Jabara.Util (omittedFirstCharLower)
 import           Jabara.Yesod.Util (getResourcePath)
-import           ModelDef (Quarter(..))
+import           ModelDef (Quarter(..), mapQuarters, mapQuartersM)
 
 getGameIndexR :: Handler [WVOGame]
 getGameIndexR = runDB $ selectList [] [Asc GameDate]
@@ -78,8 +78,18 @@ putGameIndexR = do
                                         , _gameDate = now
                                         }
                 gameId <- insert game
+                _      <- mapQuartersM (\q -> insert $ emptyScore gameId q)
                 pure gameId
     sendResponseCreated $ GameUiR gameId
+
+emptyScore :: GameId -> Quarter -> Score
+emptyScore gameId quarter = Score {
+                              _scoreGame = gameId
+                            , _scoreQuarter = quarter
+                            , _scoreTeamAPoint = 0
+                            , _scoreTeamBPoint = 0
+                            , _scoreLock = False
+                            }
 
 insertIfNotExists :: (MonadIO m, PersistUnique (PersistEntityBackend val),
     PersistEntity val) =>
@@ -110,7 +120,7 @@ getGameR gameId = do
     core :: MonadIO m => ReaderT SqlBackend m VOGame
     core = do
         game <- get404 gameId
-        scores   <- selectList [ScoreGameId ==. gameId] []
+        scores   <- selectList [ScoreGame ==. gameId] []
                     >>= pure . L.sortBy (
                             \r l -> let r' = (toRecord r)^.scoreQuarter
                                         l' = (toRecord l)^.scoreQuarter
@@ -130,7 +140,7 @@ postGameR gameId = do
 
 deleteGameR :: GameId -> Handler ()
 deleteGameR gameId = runDB $ do
-    deleteWhere [ScoreGameId ==. gameId]
+    deleteWhere [ScoreGame ==. gameId]
     delete gameId
 
 type QuarterIndex = Int
@@ -193,42 +203,6 @@ getEmptyGameR = do
                               , _gameTeamB = dummyKey
                               , _gameDate = now
                             }
-        , _voGameScore = [
-              Entity dummyKey $ Score {
-                  _scoreGameId = dummyKey
-                , _scoreQuarter = First
-                , _scoreTeamAPoint  = 0
-                , _scoreTeamBPoint  = 0
-                , _scoreLock = False
-              }
-            , Entity dummyKey $ Score {
-                  _scoreGameId = dummyKey
-                , _scoreQuarter = Second
-                , _scoreTeamAPoint  = 0
-                , _scoreTeamBPoint  = 0
-                , _scoreLock = False
-              }
-            , Entity dummyKey $ Score {
-                  _scoreGameId = dummyKey
-                , _scoreQuarter = Third
-                , _scoreTeamAPoint  = 0
-                , _scoreTeamBPoint  = 0
-                , _scoreLock = False
-              }
-            , Entity dummyKey $ Score {
-                  _scoreGameId = dummyKey
-                , _scoreQuarter = Fourth
-                , _scoreTeamAPoint  = 0
-                , _scoreTeamBPoint  = 0
-                , _scoreLock = False
-              }
-            , Entity dummyKey $ Score {
-                  _scoreGameId = dummyKey
-                , _scoreQuarter = Extra
-                , _scoreTeamAPoint  = 0
-                , _scoreTeamBPoint  = 0
-                , _scoreLock = False
-              }
-          ]
+        , _voGameScore = mapQuarters $ (\q -> Entity dummyKey $ emptyScore dummyKey q)
       }
   }
