@@ -12,7 +12,6 @@ const copyGame = state => {
 function newGame(state, action) {
     switch (action.type) {
         case NewGameActs.CHANGE_LEAGUE_NAME: {
-                console.log(action)
             const ret = copyGame(state)
             ret.game.leagueName = action.value
             return ret
